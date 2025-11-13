@@ -8,21 +8,20 @@ AHumanoid::AHumanoid()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+  MoveComp = GetCharacterMovement();
+  MoveComp->SetComponentTickEnabled(true);
+  MoveComp->SetActive(true);
 }
 
 // Called when the game starts or when spawned
-void AHumanoid::BeginPlay()
-{
-	Super::BeginPlay();
-	
+void AHumanoid::BeginPlay() { GetMesh()->SetRelativeLocation(FVector(1,1, GetCapsuleComponent()->GetScaledCapsuleHalfHeight()));
+  UE_LOG(LogTemp, Warning, TEXT("Hello World %s"), *GetMesh()->GetName());
 }
 
 // Called every frame
 void AHumanoid::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -31,4 +30,3 @@ void AHumanoid::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
-

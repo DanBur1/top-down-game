@@ -13,5 +13,11 @@ UCLASS()
 class LIMEMYANMAR_API ACoolBob : public AHumanoid
 {
 	GENERATED_BODY()
-	
+
+  public:
+  
+    // Methods
+  
+    // Moves player around
+    void move(float x, float y);
 };
