@@ -14,7 +14,7 @@ AHumanoid::AHumanoid()
 }
 
 // Called when the game starts or when spawned
-void AHumanoid::BeginPlay() { GetMesh()->SetRelativeLocation(FVector(1,1, GetCapsuleComponent()->GetScaledCapsuleHalfHeight()));
+void AHumanoid::BeginPlay() {
   UE_LOG(LogTemp, Warning, TEXT("Hello World %s"), *GetMesh()->GetName());
 }
 
@@ -22,11 +22,4 @@ void AHumanoid::BeginPlay() { GetMesh()->SetRelativeLocation(FVector(1,1, GetCap
 void AHumanoid::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-}
-
-// Called to bind functionality to input
-void AHumanoid::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }

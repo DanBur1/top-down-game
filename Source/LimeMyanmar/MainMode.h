@@ -23,6 +23,4 @@ class LIMEMYANMAR_API AMainMode : public AGameMode
     AMainMode();
     // BeginPlay
     virtual void BeginPlay() override;
-    // Spawn player
-    virtual void RestartPlayer(AController *NewPlayer) override;
 };

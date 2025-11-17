@@ -15,7 +15,15 @@ class LIMEMYANMAR_API ACoolBob : public AHumanoid
 	GENERATED_BODY()
 
   public:
-  
+    // Default unreal events
+
+    // Constructor
+    ACoolBob();
+    virtual void BeginPlay() override;
+    // Triggered when possessed by NewController
+    virtual void PossessedBy(AController *NewController) override;
+    virtual void Tick(float DeltaTime) override;
+
     // Methods
   
     // Moves player around

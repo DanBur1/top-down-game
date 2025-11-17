@@ -23,27 +23,30 @@ AQFSM2_Player::AQFSM2_Player(){
 
 void AQFSM2_Player::BeginPlay(){
   Super::BeginPlay();
-  // Adds IMC_Base
-  if (ULocalPlayer *LocalPlayer = GetLocalPlayer()) {
-    if (UEnhancedInputLocalPlayerSubsystem *Subsystem =
-            ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
-                LocalPlayer)) {
-      Subsystem->AddMappingContext(InputMappingContext, 0);
-    }
-  }
 }
 
 void AQFSM2_Player::OnPossess(APawn *InPawn) {
   Super::OnPossess(InPawn);
 
   if (InPawn) {
+    UE_LOG(LogTemp, Warning, TEXT("CONTROLLER FOUND A PAWN"));
     // Get possessed pawn
     PlayerCharacter = Cast<ACoolBob>(InPawn);
+    // Adds IMC_Base
+    if (ULocalPlayer *LocalPlayer = GetLocalPlayer()) {
+      if (UEnhancedInputLocalPlayerSubsystem *Subsystem =
+              ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
+                  LocalPlayer)) {
+        Subsystem->AddMappingContext(InputMappingContext, 0);
+        SetupInputComponent();
+      }
+    }
   }
 }
 
 void AQFSM2_Player::SetupInputComponent(){
   Super::SetupInputComponent();
+  UE_LOG(LogTemp, Warning, TEXT("Setting controls"));
   if (UEnhancedInputComponent *EnhancedInputComponent =
           Cast<UEnhancedInputComponent>(InputComponent)) {
     if (MoveAction) {
