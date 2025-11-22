@@ -11,11 +11,42 @@ AHumanoid::AHumanoid()
   MoveComp = GetCharacterMovement();
   MoveComp->SetComponentTickEnabled(true);
   MoveComp->SetActive(true);
+  UE_LOG(LogTemp, Warning, TEXT("Constructor"));
+
 }
 
 // Called when the game starts or when spawned
 void AHumanoid::BeginPlay() {
   UE_LOG(LogTemp, Warning, TEXT("Hello World %s"), *GetMesh()->GetName());
+  // Weapon init
+  if (WeaponClass) {
+    UE_LOG(LogTemp, Warning, TEXT("Has weapon class"));
+    FActorSpawnParameters SpawnParams;
+    SpawnParams.Owner = this;
+    SpawnParams.SpawnCollisionHandlingOverride =
+        ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+    FVector SpawnLocation = FVector::ZeroVector;
+    FRotator SpawnRotation = FRotator::ZeroRotator;
+    Weapon = GetWorld()->SpawnActor<AWeapon>(
+        WeaponClass, SpawnLocation, SpawnRotation, SpawnParams);
+
+    if (Weapon) {
+      UE_LOG(LogTemp, Warning, TEXT("Spawned the gun"));
+      FName SocketName(TEXT("hand_gun"));
+      Weapon->AttachToComponent(
+          this->GetRootComponent(),
+          FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
+    }
+    setWeaponState(WeaponClass);
+  }
+}
+
+void AHumanoid::setWeaponState(TSubclassOf<AWeapon> NewWeapon) {
+  UE_LOG(LogTemp, Warning, TEXT("Setting the weapon state"));
+  if (Weapon) {
+    WeaponState=Weapon->GetWeaponAnimState();
+    UE_LOG(LogTemp, Warning, TEXT("Actually setting the weapon class"));
+  }
 }
 
 // Called every frame

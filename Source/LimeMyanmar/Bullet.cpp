@@ -11,7 +11,7 @@ ABullet::ABullet() {
   BulletMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
   BulletMesh->BodyInstance.SetCollisionProfileName(TEXT("Projectile"));
   BulletMesh->SetNotifyRigidBodyCollision(true);
-  BulletMesh->OnComponentHit.AddDynamic(this, &ABullet::OnHit);
+  BulletMesh->OnComponentHit.AddDynamic(this, &ABullet::onHit);
   // Movement
   ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(
       TEXT("ProjectileMovement"));
@@ -40,20 +40,29 @@ void ABullet::BeginPlay() {
   }
 }
 
-void ABullet::OnHit(UPrimitiveComponent *HitComp, AActor *OtherActor,
+void ABullet::onHit(UPrimitiveComponent *HitComp, AActor *OtherActor,
                     UPrimitiveComponent *OtherComp, FVector NormalImpulse,
                     const FHitResult &Hit) {
-
-  ApplyRadialDamageAtLocation(Hit.ImpactPoint);
+  if (is_explosive)
+    applyRadialDamageAtLocation(Hit.ImpactPoint);
+  else
+    applyDamageToHitActor(OtherActor);
   Destroy();
 }
 
-void ABullet::ApplyRadialDamageAtLocation(const FVector &Location) {
+void ABullet::applyRadialDamageAtLocation(const FVector &Location) {
   TArray<AActor *> IgnoreActors;
   IgnoreActors.Add(GetOwner());
-  UGameplayStatics::ApplyRadialDamage(GetWorld(), DamageAmount, Location,
-                                      DamageRadius, nullptr, IgnoreActors, this,
+  UGameplayStatics::ApplyRadialDamage(GetWorld(), damage, Location,
+                                      damage_radius, nullptr, IgnoreActors, this,
                                       GetInstigatorController());
+}
+
+void ABullet::applyDamageToHitActor(AActor *Actor) {
+  TArray<AActor *> IgnoreActors;
+  IgnoreActors.Add(GetOwner());
+  UGameplayStatics::ApplyDamage(Actor, damage, GetInstigatorController(),
+                                GetOwner(), nullptr);
 }
 
 void ABullet::Tick(float DeltaTime) { Super::Tick(DeltaTime); }

@@ -10,33 +10,48 @@ class LIMEMYANMAR_API ABullet : public AActor {
   GENERATED_BODY()
 
 public:
+  // Default unreal events
+
+  // Constructor
   ABullet();
 
-protected:
-  // Variables and components
+  // Properties
 
+  // Damage dealt by bullet
+  UPROPERTY(EditDefaultsOnly, Category = "Damage")
+  float damage = 20.f;
+
+protected:
+  // Default unreal events
+
+  // Plays when actor is placed in the world or the game is started
+  virtual void BeginPlay() override;
+
+  // Properties
+
+  // Model
   UPROPERTY(VisibleAnywhere, Category = "Components")
   UStaticMeshComponent *BulletMesh;
+  // Determines which function is used to deal damage
+  bool is_explosive = false;
   // Projectile movement component
   UPROPERTY(VisibleAnywhere, Category = "Components")
   class UProjectileMovementComponent *ProjectileMovement;
   // Radius of splash damage
   UPROPERTY(EditDefaultsOnly, Category = "Damage")
-  float DamageRadius = 50.f;
-  // Damage in the location of the hit
-  UPROPERTY(EditDefaultsOnly, Category = "Damage")
-  float DamageAmount = 20.f;
+  float damage_radius = 50.f;
 
-  // Functions
-
-  virtual void BeginPlay() override;
-
+  // Methods
+  
+  // Damage function used when the projectile is explosive
+  void applyRadialDamageAtLocation(const FVector &Location);
+  // Reaction to solid collision
   UFUNCTION()
-  void OnHit(UPrimitiveComponent *HitComp, AActor *OtherActor,
+  void onHit(UPrimitiveComponent *HitComp, AActor *OtherActor,
              UPrimitiveComponent *OtherComp, FVector NormalImpulse,
              const FHitResult &Hit);
-
-  void ApplyRadialDamageAtLocation(const FVector &Location);
+  // Damage function used when the projectile is not explosive
+  void applyDamageToHitActor(AActor *Actor);
 
 public:
   // Variables
