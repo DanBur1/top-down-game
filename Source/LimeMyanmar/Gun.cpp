@@ -4,10 +4,14 @@
 #include "Gun.h"
 
 AGun::AGun(){
-  if (GetOwner())
-    Gunman = Cast<ACharacter>(GetOwner());
   Muzzle = CreateDefaultSubobject<USceneComponent>(TEXT("Muzzle"));
   Muzzle->SetupAttachment(RootComponent);
+}
+
+void AGun::BeginPlay() {
+  Super::BeginPlay();
+  if (GetOwner())
+    Gunman = Cast<ACharacter>(GetOwner());
 }
 
 bool AGun::attack(){
@@ -43,15 +47,17 @@ bool AGun::fire(){
     if (!SpawnedBullet) {
       fail_rate++;
       continue;
+    } else if (Gunman) {
+      // Setting the bullet up
+      SpawnedBullet->damage = damage;
+      SpawnedBullet->speed_of_gun =
+            Gunman->GetMovementComponent()->Velocity.Length();
+      SpawnedBullet->Owner = Gunman;
+
+      // Spawn bullet
+      UGameplayStatics::FinishSpawningActor(
+          SpawnedBullet, FTransform(SpawnRotation, SpawnLocation));
     }
-
-    // Setting the bullet up
-    SpawnedBullet->damage = damage;
-    SpawnedBullet->speed_of_gun =
-        Gunman->GetMovementComponent()->Velocity.Length();
-
-    // Spawn bullet
-    SpawnedBullet->FinishSpawning(FTransform(SpawnRotation, SpawnLocation));
   }
   return fail_rate<projectiles_per_shot;
 }

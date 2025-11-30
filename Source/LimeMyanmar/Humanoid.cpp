@@ -49,6 +49,14 @@ void AHumanoid::setWeaponState(TSubclassOf<AWeapon> NewWeapon) {
   }
 }
 
+void AHumanoid::useCharacterWeapon(){
+  if (Weapon){
+    if (Weapon->useWeapon())
+      ArmState = EHumanoidArmStates::attacking;
+  }
+  ArmState = EHumanoidArmStates::null;
+}
+
 // Called every frame
 void AHumanoid::Tick(float DeltaTime)
 {

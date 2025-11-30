@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Kismet/GameplayStatics.h"
 #include "Weapon.h"
 #include "Bullet.h"
 #include "GameFramework/Character.h"
@@ -17,6 +18,10 @@ class LIMEMYANMAR_API AGun : public AWeapon
 {
 	GENERATED_BODY()
 public:
+  // Defaul Unreal events
+
+  // Begin play
+  virtual void BeginPlay() override;
   // Properties
 
   // Number of ammunition stored in the weapon

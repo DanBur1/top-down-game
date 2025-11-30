@@ -32,14 +32,15 @@ protected:
   // Model
   UPROPERTY(VisibleAnywhere, Category = "Components")
   UStaticMeshComponent *BulletMesh;
+  // Radius of splash damage
+  UPROPERTY(EditDefaultsOnly, Category = "Damage")
+  float damage_radius = 50.f;
   // Determines which function is used to deal damage
+  UPROPERTY(VisibleAnywhere, Category = "Others")
   bool is_explosive = false;
   // Projectile movement component
   UPROPERTY(VisibleAnywhere, Category = "Components")
   class UProjectileMovementComponent *ProjectileMovement;
-  // Radius of splash damage
-  UPROPERTY(EditDefaultsOnly, Category = "Damage")
-  float damage_radius = 50.f;
 
   // Methods
   
@@ -57,8 +58,10 @@ public:
   // Variables
 
   // Vector of owner
+  UPROPERTY()
   FVector BarrelDirection;
   // Speed with which owner moves
+  UPROPERTY()
   float speed_of_gun;
 
   // Functions

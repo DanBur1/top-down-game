@@ -25,6 +25,7 @@ ABullet::ABullet() {
 
 void ABullet::BeginPlay() {
   Super::BeginPlay();
+  UE_LOG(LogTemp, Warning, TEXT("%s launched a bullet"), *GetOwner()->GetName());
   if (GetOwner()) {
     BulletMesh->IgnoreActorWhenMoving(GetOwner(), true);
   }

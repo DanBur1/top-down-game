@@ -4,21 +4,7 @@
 #include "QFSM2_Player.h"
 
 AQFSM2_Player::AQFSM2_Player(){
-  // Setting the default imc
-  static ConstructorHelpers::FObjectFinder<UInputMappingContext> IMCObject(
-      TEXT("/Game/Inputs/IMC_Base.IMC_Base"));
-  UE_LOG(LogTemp, Warning, TEXT("MAP!"));
-  if (IMCObject.Succeeded()) {
-    InputMappingContext = IMCObject.Object;
-    UE_LOG(LogTemp, Warning, TEXT("YAY!^_^"));
-  }
-
-  // Setting up actions
-  static ConstructorHelpers::FObjectFinder<UInputAction> MoveActionObj(
-      TEXT("/Game/Inputs/Actions/IA_Move.IA_Move"));
-  if (MoveActionObj.Succeeded()) {
-    MoveAction = MoveActionObj.Object;
-  }
+  // All action initializiation moved to blueprint
 }
 
 void AQFSM2_Player::BeginPlay(){
@@ -47,12 +33,83 @@ void AQFSM2_Player::OnPossess(APawn *InPawn) {
 void AQFSM2_Player::SetupInputComponent(){
   Super::SetupInputComponent();
   UE_LOG(LogTemp, Warning, TEXT("Setting controls"));
+  
+  // Bind functions to actions
   if (UEnhancedInputComponent *EnhancedInputComponent =
           Cast<UEnhancedInputComponent>(InputComponent)) {
+    // Attacking
+    if (AttackAction) {
+      EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started,
+                                         this, &AQFSM2_Player::onAttack);
+    }
+    // Movement
     if (MoveAction) {
       EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered,
                                          this, &AQFSM2_Player::onMove);
     }
+  }
+}
+
+void AQFSM2_Player::Tick(float DeltaTime) {
+  Super::Tick(DeltaTime);
+  updateAimRotation(DeltaTime);
+}
+
+FVector AQFSM2_Player::getAimLocation(){
+
+  // If not possesed return 0
+  if (!PlayerCharacter)
+    return FVector::ZeroVector;
+
+  // Getting mouse coordinates
+  FVector2D MousePosition;
+  GetMousePosition(MousePosition.X, MousePosition.Y);
+  FVector WorldLocation, WorldDirection;
+  DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
+
+  // Normalizing mouse coordinates with aiming field using trace collision
+  FHitResult HitResult;
+  FCollisionQueryParams QueryParams;
+  bool has_hit = GetWorld()->LineTraceSingleByChannel(
+      HitResult, WorldLocation, WorldLocation + WorldDirection * 10000,
+      ECC_GameTraceChannel1, 
+      QueryParams);
+  UE_LOG(LogTemp, Warning, TEXT("%s"), *HitResult.Location.ToString());
+  if (has_hit) {
+    return HitResult.Location;
+  }
+
+  // If aiming field isn't there
+  return FVector::ZeroVector;
+}
+
+void AQFSM2_Player::updateAimRotation(float DeltaTime) {
+  // Ignore if mouse location is 0 (cause it usually means getAimLocation failed)
+  FVector AimLocation = getAimLocation();
+  if (AimLocation.IsZero())
+    return;
+
+  // Ignore if not posessed
+  if (PlayerCharacter) {
+    
+    // Get rotation z value from two points the character and the mouse 
+    FVector AimDirection =
+        (AimLocation - PlayerCharacter->GetActorLocation()).GetSafeNormal();
+    FRotator NewRotation = AimDirection.Rotation();
+    NewRotation.Pitch =
+        0.0f;
+
+    // Smooth controller rotation
+    FRotator CurrentRotation = GetControlRotation();
+    FRotator TargetRotation =
+        FMath::RInterpTo(CurrentRotation, NewRotation, DeltaTime, 10.0f);
+    SetControlRotation(TargetRotation);
+  }
+}
+
+void AQFSM2_Player::onAttack(){
+  if (PlayerCharacter){
+    PlayerCharacter->useCharacterWeapon();
   }
 }
 

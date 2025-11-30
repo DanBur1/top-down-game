@@ -38,21 +38,26 @@ public:
 	// Properties
 
   // Enum that is used to store character's state depending on arm movement
-  UPROPERTY(EditAnywhere, Category = "Character states")
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character states")
   EHumanoidArmStates ArmState = EHumanoidArmStates::null;
   // Enum that is used to store character's state depending on movement
-  UPROPERTY(EditAnywhere,  Category = "Character states")
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character states")
   EHumanoidBodyStates BodyState = EHumanoidBodyStates::idle;
   // Enum that is used to store character's state depending on his weapon
-  UPROPERTY(EditAnywhere, Category = "Character states")
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character states")
   EHumanoidWeaponStates WeaponState = EHumanoidWeaponStates::unarmed;
 	// Movement component
   UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
   UCharacterMovementComponent *MoveComp;
-  // Weapon that character starts with
+  // Class of the weapon character uses. Can be used to set starter weapon
   UPROPERTY(EditAnywhere, Category = "Weapons")
   TSubclassOf<AWeapon> WeaponClass;
 	// Weapon character can use
   UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapons")
   AWeapon *Weapon;
+
+  // Methods
+
+  // Calls attack function in the weapon
+  void useCharacterWeapon();
 };

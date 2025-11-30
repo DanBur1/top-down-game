@@ -58,8 +58,6 @@ protected:
   virtual bool attack();
 	// Checks whether the weapon is still in cooldown stage
   bool isCoolingDown();
-	// Calls attack for weapon children
-  bool useWeapon();
 
 public:	
 	// Unreal default events
@@ -67,4 +65,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	// Methods
+  
+	// Calls attack for weapon children
+  bool useWeapon();
 };

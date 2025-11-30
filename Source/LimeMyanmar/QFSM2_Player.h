@@ -29,6 +29,8 @@ class LIMEMYANMAR_API AQFSM2_Player : public APlayerController
     virtual void OnPossess(APawn *InPawn) override;
     // Connects actions with functions
     virtual void SetupInputComponent() override;
+    // Ticks
+    virtual void Tick(float DeltaTime) override;
 
     // Variables
 
@@ -36,6 +38,9 @@ class LIMEMYANMAR_API AQFSM2_Player : public APlayerController
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
     UInputMappingContext *InputMappingContext;
     // Actions
+    // IA_Attack
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+    UInputAction *AttackAction;
     // IA_Move
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
     UInputAction *MoveAction;
@@ -47,8 +52,14 @@ class LIMEMYANMAR_API AQFSM2_Player : public APlayerController
     ACoolBob *PlayerCharacter;
      
     // Methods
-    
-    // Setting up the controls
+
+    // Traces a line from mouse to the plane that has "Aim" collision profile. Returns 0 if trace failed
+    FVector getAimLocation();
+    // Changes controllers rotation according to mouse
+    void updateAimRotation(float DeltaTime);
+    // Reactions to actions
+    // Reaction to IA_Attack
+    void onAttack();
     // Reaction to IA_Move
     void onMove(const FInputActionValue &Value);
 };
