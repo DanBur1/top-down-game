@@ -8,11 +8,16 @@ AHumanoid::AHumanoid()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+  // Movement
   MoveComp = GetCharacterMovement();
   MoveComp->SetComponentTickEnabled(true);
   MoveComp->SetActive(true);
   UE_LOG(LogTemp, Warning, TEXT("Constructor"));
 
+  // Health
+  HealthSystem =
+      CreateDefaultSubobject<UDestructableComponent>(TEXT("Health"));
 }
 
 // Called when the game starts or when spawned
@@ -34,7 +39,7 @@ void AHumanoid::BeginPlay() {
       UE_LOG(LogTemp, Warning, TEXT("Spawned the gun"));
       FName SocketName(TEXT("hand_gun"));
       Weapon->AttachToComponent(
-          this->GetRootComponent(),
+          this->GetMesh(),
           FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
     }
     setWeaponState(WeaponClass);

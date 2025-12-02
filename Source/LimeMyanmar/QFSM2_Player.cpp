@@ -33,7 +33,9 @@ void AQFSM2_Player::OnPossess(APawn *InPawn) {
 void AQFSM2_Player::SetupInputComponent(){
   Super::SetupInputComponent();
   UE_LOG(LogTemp, Warning, TEXT("Setting controls"));
-  
+  // Make mouse visible
+  SetShowMouseCursor(true);
+
   // Bind functions to actions
   if (UEnhancedInputComponent *EnhancedInputComponent =
           Cast<UEnhancedInputComponent>(InputComponent)) {

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DestructableComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -46,6 +47,9 @@ public:
   // Enum that is used to store character's state depending on his weapon
   UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character states")
   EHumanoidWeaponStates WeaponState = EHumanoidWeaponStates::unarmed;
+  // Component responsible for health and death
+  UPROPERTY(EditAnywhere, Category = "Others")
+  UDestructableComponent *HealthSystem;
 	// Movement component
   UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
   UCharacterMovementComponent *MoveComp;

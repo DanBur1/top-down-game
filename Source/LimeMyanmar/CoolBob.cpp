@@ -3,7 +3,10 @@
 
 #include "CoolBob.h"
 
-ACoolBob::ACoolBob() : AHumanoid() { PrimaryActorTick.bCanEverTick = true; }
+ACoolBob::ACoolBob() : AHumanoid() {
+  PrimaryActorTick.bCanEverTick = true;
+  HealthSystem->setHealth(100.f);
+}
 
 void ACoolBob::BeginPlay(){
   Super::BeginPlay();
