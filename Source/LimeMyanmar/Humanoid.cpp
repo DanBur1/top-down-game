@@ -49,17 +49,18 @@ void AHumanoid::BeginPlay() {
 void AHumanoid::setWeaponState(TSubclassOf<AWeapon> NewWeapon) {
   UE_LOG(LogTemp, Warning, TEXT("Setting the weapon state"));
   if (Weapon) {
-    WeaponState=Weapon->GetWeaponAnimState();
+    WeaponState = Weapon->GetWeaponType();
     UE_LOG(LogTemp, Warning, TEXT("Actually setting the weapon class"));
   }
 }
 
+void AHumanoid::pickWeapon(){
+
+}
+
 void AHumanoid::useCharacterWeapon(){
-  if (Weapon){
-    if (Weapon->useWeapon())
-      ArmState = EHumanoidArmStates::attacking;
-  }
-  ArmState = EHumanoidArmStates::null;
+  if (Weapon)
+    Weapon->useWeapon();
 }
 
 // Called every frame

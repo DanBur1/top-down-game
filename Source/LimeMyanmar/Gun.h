@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Kismet/GameplayStatics.h"
 #include "Weapon.h"
 #include "Bullet.h"
 #include "GameFramework/Character.h"

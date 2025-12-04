@@ -7,38 +7,46 @@ ABullet::ABullet() {
   PrimaryActorTick.bCanEverTick = true;
   // Visual
   BulletMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BulletMesh"));
+  RootComponent = BulletMesh;
   // Collision
   BulletMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+  BulletMesh->SetCollisionObjectType(ECC_WorldDynamic);
+  BulletMesh->SetCollisionResponseToAllChannels(ECR_Block);
   BulletMesh->BodyInstance.SetCollisionProfileName(TEXT("Projectile"));
   BulletMesh->SetNotifyRigidBodyCollision(true);
+  BulletMesh->SetEnableGravity(false);
+  BulletMesh->SetSimulatePhysics(false);
   BulletMesh->OnComponentHit.AddDynamic(this, &ABullet::onHit);
   // Movement
   ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(
       TEXT("ProjectileMovement"));
-  ProjectileMovement->UpdatedComponent = BulletMesh;
+  ProjectileMovement->UpdatedComponent = RootComponent;
   ProjectileMovement->InitialSpeed = 2000.f;
-  ProjectileMovement->MaxSpeed = 5000.f;
+  ProjectileMovement->MaxSpeed = 3000.f;
   ProjectileMovement->bRotationFollowsVelocity = true;
-  ProjectileMovement->bShouldBounce = true;
+  ProjectileMovement->bShouldBounce = false;
   ProjectileMovement->ProjectileGravityScale = 1.f;
 }
 
 void ABullet::BeginPlay() {
   Super::BeginPlay();
-  UE_LOG(LogTemp, Warning, TEXT("%s launched a bullet"), *GetOwner()->GetName());
   if (GetOwner()) {
+    UE_LOG(LogTemp, Warning, TEXT("%s launched a bullet"),
+           *GetOwner()->GetName());
     BulletMesh->IgnoreActorWhenMoving(GetOwner(), true);
-  }
   if ((ProjectileMovement) && (!BarrelDirection.IsZero())) {
-    ProjectileMovement->Velocity =
-        BarrelDirection * (ProjectileMovement->InitialSpeed + speed_of_gun);
+      ProjectileMovement->Velocity =
+          BarrelDirection * (ProjectileMovement->InitialSpeed+speed_of_gun);
+    ProjectileMovement->Activate();
     UE_LOG(LogTemp, Warning,
-           TEXT("Spawned bullet at %s, initial speed is %s, "),
+           TEXT("Spawned bullet at %s, initial speed is %s, direction is %s"),
            *GetActorLocation().ToString(),
-           *ProjectileMovement->Velocity.ToString());
-
-    ProjectileMovement->SetActive(true);
+           *ProjectileMovement->Velocity.ToString(),
+           *BarrelDirection.ToString());
   }
+  }
+  GetWorldTimerManager().SetTimer(MaxDistanceTimer, this,
+                                  &ABullet::selfDestruct, travel_time, false);
 }
 
 void ABullet::onHit(UPrimitiveComponent *HitComp, AActor *OtherActor,
@@ -48,7 +56,7 @@ void ABullet::onHit(UPrimitiveComponent *HitComp, AActor *OtherActor,
     applyRadialDamageAtLocation(Hit.ImpactPoint);
   else
     applyDamageToHitActor(OtherActor);
-  Destroy();
+  selfDestruct();
 }
 
 void ABullet::applyRadialDamageAtLocation(const FVector &Location) {
@@ -60,10 +68,17 @@ void ABullet::applyRadialDamageAtLocation(const FVector &Location) {
 }
 
 void ABullet::applyDamageToHitActor(AActor *Actor) {
+  UE_LOG(LogTemp, Warning, TEXT("%s is hit"), *Actor->GetName());
   TArray<AActor *> IgnoreActors;
   IgnoreActors.Add(GetOwner());
   UGameplayStatics::ApplyDamage(Actor, damage, GetInstigatorController(),
                                 GetOwner(), nullptr);
 }
 
-void ABullet::Tick(float DeltaTime) { Super::Tick(DeltaTime); }
+void ABullet::selfDestruct(){
+  Destroy();
+}
+
+void ABullet::Tick(float DeltaTime) {
+  Super::Tick(DeltaTime);
+}

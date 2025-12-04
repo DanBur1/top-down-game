@@ -9,6 +9,14 @@ UCLASS()
 class LIMEMYANMAR_API ABullet : public AActor {
   GENERATED_BODY()
 
+private:
+
+  // Properties
+  
+  // Time to self destruct
+  UPROPERTY()
+  FTimerHandle MaxDistanceTimer;
+
 public:
   // Default unreal events
 
@@ -18,8 +26,11 @@ public:
   // Properties
 
   // Damage dealt by bullet
-  UPROPERTY(EditDefaultsOnly, Category = "Damage")
+  UPROPERTY(EditDefaultsOnly, Category = "Bullet properties")
   float damage = 20.f;
+  // Time the bullet can fly before being deleted
+  UPROPERTY(EditDefaultsOnly, Category = "Bullet properties")
+  float travel_time = 0.f;
 
 protected:
   // Default unreal events
@@ -33,7 +44,7 @@ protected:
   UPROPERTY(VisibleAnywhere, Category = "Components")
   UStaticMeshComponent *BulletMesh;
   // Radius of splash damage
-  UPROPERTY(EditDefaultsOnly, Category = "Damage")
+  UPROPERTY(EditDefaultsOnly, Category = "Bullet properties")
   float damage_radius = 50.f;
   // Determines which function is used to deal damage
   UPROPERTY(VisibleAnywhere, Category = "Others")
@@ -53,6 +64,8 @@ protected:
              const FHitResult &Hit);
   // Damage function used when the projectile is not explosive
   void applyDamageToHitActor(AActor *Actor);
+  // Deletes the bullet
+  void selfDestruct();
 
 public:
   // Variables
@@ -67,5 +80,6 @@ public:
   // Functions
 
   // Tick tock on the clock
+  UFUNCTION()
   virtual void Tick(float DeltaTime) override;
 };

@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "HumanoidAnimationStates.h"
+#include "Kismet/GameplayStatics.h"
+#include "ProjectEnums.h"
 #include "GameFramework/Actor.h"
-#include "HumanoidAnimationStates.h"
 #include "Weapon.generated.h"
 
 UCLASS()
@@ -21,9 +21,6 @@ public:
 
 	// Properties
 
-	// Animation state associated with that weapon
-  UPROPERTY(EditAnywhere, Category = "Weapon parameters")
-  EHumanoidWeaponStates AnimState = EHumanoidWeaponStates::unarmed;
   // Time it takes to reset the weapon
   UPROPERTY(EditAnywhere, Category = "Weapon parameters")
   float cooldown = 0.f;
@@ -33,9 +30,12 @@ public:
 
 	// Methods
 
-	// Allows character class to quickly get the fitting anim state for the weapon
+	// Allows other classes to quickly get the animation state associated with this weapon type
   UFUNCTION( BlueprintCallable, Category = "Weapon")
-  EHumanoidWeaponStates GetWeaponAnimState();
+  EHumanoidWeaponStates GetWeaponType();
+  // Allows other classes to get the state this weapon is in
+  UFUNCTION(BlueprintCallable, Category = "Weapon")
+  EHumanoidArmStates GetWeaponState();
 
 protected:
 	// Unreal default events
@@ -45,6 +45,12 @@ protected:
 
 	// Properties
 
+  // Animation state associated with that weapon type
+  UPROPERTY(EditAnywhere, Category = "Weapon parameters")
+  EHumanoidWeaponStates AnimType = EHumanoidWeaponStates::unarmed;
+  // Animation state for the current action of the weapon
+  UPROPERTY(EditAnywhere, Category = "Weapon parameters")
+  EHumanoidArmStates AnimState = EHumanoidArmStates::null;
 	// Time of the last attack
   UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Parameters")
   float last_attack = 0.f;

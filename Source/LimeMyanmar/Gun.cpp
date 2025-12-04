@@ -39,10 +39,10 @@ bool AGun::fire(){
     FVector NewDirection = Forward.RotateAngleAxis(
         FMath::RadiansToDegrees(RandomAngle), FVector::UpVector);
     FRotator SpawnRotation = NewDirection.Rotation();
-
+    UE_LOG(LogTemp, Warning, TEXT("Spawn location %s"), *SpawnLocation.ToString());
     // Deffered spawn to modify the bullet before it's activated
     ABullet *SpawnedBullet = GetWorld()->SpawnActorDeferred<ABullet>(
-        BulletClass, FTransform(SpawnRotation, SpawnLocation), nullptr, nullptr,
+        BulletClass, FTransform(SpawnRotation, SpawnLocation, FVector(1.f, 1.f, 1.f)), nullptr, nullptr,
         ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
     if (!SpawnedBullet) {
       fail_rate++;
@@ -52,12 +52,14 @@ bool AGun::fire(){
       SpawnedBullet->damage = damage;
       SpawnedBullet->speed_of_gun =
             Gunman->GetMovementComponent()->Velocity.Length();
+      SpawnedBullet->BarrelDirection = NewDirection.GetSafeNormal();
       SpawnedBullet->Owner = Gunman;
-
+      Gunman->GetMesh()->IgnoreActorWhenMoving(SpawnedBullet, true);
       // Spawn bullet
       UGameplayStatics::FinishSpawningActor(
-          SpawnedBullet, FTransform(SpawnRotation, SpawnLocation));
+          SpawnedBullet, FTransform(SpawnRotation, SpawnLocation, FVector(1.f, 1.f, 1.f)));
     }
   }
+  UE_LOG(LogTemp, Warning, TEXT("%d bullets not spawned"), fail_rate);
   return fail_rate<projectiles_per_shot;
 }

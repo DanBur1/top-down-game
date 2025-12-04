@@ -13,7 +13,9 @@ AWeapon::AWeapon()
   RootComponent = WeaponMesh;
 }
 
-EHumanoidWeaponStates AWeapon::GetWeaponAnimState(){ return AnimState; }
+EHumanoidWeaponStates AWeapon::GetWeaponType() { return AnimType; }
+
+EHumanoidArmStates AWeapon::GetWeaponState() { return AnimState; }
 
 // Called when the game starts or when spawned
 void AWeapon::BeginPlay()
@@ -33,7 +35,10 @@ bool AWeapon::useWeapon(){
   if (isCoolingDown())
     return false;
   last_attack = GetWorld()->GetTimeSeconds();
-  return attack();
+  if (attack()) {
+    AnimState = EHumanoidArmStates::attacking;
+    return true;
+  } else return false;
 }
 
 // Called every frame

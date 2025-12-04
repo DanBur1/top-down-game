@@ -62,6 +62,8 @@ public:
 
   // Methods
 
+  // Changes character's weapon and it's class
+  void pickWeapon();
   // Calls attack function in the weapon
   void useCharacterWeapon();
 };

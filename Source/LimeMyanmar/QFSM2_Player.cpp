@@ -76,7 +76,6 @@ FVector AQFSM2_Player::getAimLocation(){
       HitResult, WorldLocation, WorldLocation + WorldDirection * 10000,
       ECC_GameTraceChannel1, 
       QueryParams);
-  UE_LOG(LogTemp, Warning, TEXT("%s"), *HitResult.Location.ToString());
   if (has_hit) {
     return HitResult.Location;
   }
