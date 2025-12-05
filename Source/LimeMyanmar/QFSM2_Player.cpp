@@ -49,6 +49,11 @@ void AQFSM2_Player::SetupInputComponent(){
       EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered,
                                          this, &AQFSM2_Player::onMove);
     }
+    // Picking/Throwing weapon
+    if (ReplaceWeaponAction) {
+      EnhancedInputComponent->BindAction(ReplaceWeaponAction, ETriggerEvent::Triggered,
+                                         this, &AQFSM2_Player::onReplaceWeapon);
+    }
   }
 }
 
@@ -121,5 +126,12 @@ void AQFSM2_Player::onMove(const FInputActionValue &Value) {
     float AxisX = MovementVector.X;
     float AxisY = MovementVector.Y;
     PlayerCharacter->move(AxisX, AxisY);
+  }
+}
+
+void AQFSM2_Player::onReplaceWeapon(){
+  if (PlayerCharacter){
+    UE_LOG(LogTemp, Warning, TEXT("PICK!"));
+    PlayerCharacter->replaceWeapon();
   }
 }

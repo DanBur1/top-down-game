@@ -7,7 +7,8 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Weapon.h"
+#include "Gun.h"
+#include "Melee.h"
 #include "Humanoid.generated.h"
 
 
@@ -16,6 +17,12 @@ UCLASS()
 class LIMEMYANMAR_API AHumanoid : public ACharacter
 {
 	GENERATED_BODY()
+private:
+
+  // Methods
+
+  // Used to quickly decide on what weapon should a character pick if several are availiable
+  int weaponPriority(AWeapon *Weapon);
 
 protected:
   // Default Unreal events
@@ -62,8 +69,10 @@ public:
 
   // Methods
 
-  // Changes character's weapon and it's class
-  void pickWeapon();
+  // Picks up closest weapon (or switches to unarmed if there's none) and throws the previous one
+  void replaceWeapon(float SearchRadius = 200.f);
+  // Uses current character weapon as projectile
+  void throwWeapon();
   // Calls attack function in the weapon
   void useCharacterWeapon();
 };

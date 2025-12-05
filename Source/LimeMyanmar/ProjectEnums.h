@@ -9,7 +9,7 @@ UENUM(BlueprintType)
 enum class EHumanoidArmStates : uint8 {
   null UMETA(DisplayName = "Default state"), // default state
   interacting UMETA(
-      DisplayName = "Interacting"), // characte interacting with interactables
+      DisplayName = "Interacting"), // character interacting with interactables
   attacking UMETA(DisplayName = "Attacking"), // character uses weapon
   picking UMETA(DisplayName = "Picking"),     // character picks an item
   throwing UMETA(DisplayName = "Throwing")
@@ -29,8 +29,8 @@ enum class EHumanoidBodyStates : uint8 {
 UENUM(BlueprintType)
 // State that affects the arm position of the character
 enum class EHumanoidWeaponStates : uint8 {
-  unarmed UMETA(DisplayName = "Unarmed"),
-  handgun UMETA(DisplayName = "Handgun"),
+  unarmed UMETA(DisplayName = "Unarmed"), // BP_Unarmed
+  handgun UMETA(DisplayName = "Handgun"), // BP_Handgun
   cold_short UMETA(DisplayName = "Cold Short"),
   cold_long UMETA(DisplayName = "Cold Long"),
   pump UMETA(DisplayName = "Pump"),

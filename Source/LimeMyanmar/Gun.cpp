@@ -15,7 +15,11 @@ void AGun::BeginPlay() {
 }
 
 bool AGun::attack(){
-  return fire();
+  if (magazine>0) {
+    magazine--;
+    return fire();
+  }
+  return false;
 }
 
 bool AGun::fire(){

@@ -44,6 +44,9 @@ class LIMEMYANMAR_API AQFSM2_Player : public APlayerController
     // IA_Move
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
     UInputAction *MoveAction;
+    // IA_ReplaceWeapon
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+    UInputAction *ReplaceWeaponAction;
 
 
   private:
@@ -62,4 +65,6 @@ class LIMEMYANMAR_API AQFSM2_Player : public APlayerController
     void onAttack();
     // Reaction to IA_Move
     void onMove(const FInputActionValue &Value);
+    // Reaction to IA_ReplaceWeapon
+    void onReplaceWeapon();
 };

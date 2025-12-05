@@ -20,6 +20,17 @@ AHumanoid::AHumanoid()
       CreateDefaultSubobject<UDestructableComponent>(TEXT("Health"));
 }
 
+int AHumanoid::weaponPriority(AWeapon *TestedWeapon){
+  if (!TestedWeapon)
+    return 0;
+  AGun *AsGun = Cast<AGun>(TestedWeapon);
+  if (AsGun)
+    return 1*AsGun->magazine;
+  if (Cast<AMelee>(TestedWeapon))
+    return 2;
+  return 0;
+}
+
 // Called when the game starts or when spawned
 void AHumanoid::BeginPlay() {
   UE_LOG(LogTemp, Warning, TEXT("Hello World %s"), *GetMesh()->GetName());
@@ -54,7 +65,68 @@ void AHumanoid::setWeaponState(TSubclassOf<AWeapon> NewWeapon) {
   }
 }
 
-void AHumanoid::pickWeapon(){
+void AHumanoid::replaceWeapon(float SearchRadius) {
+  if (Weapon)
+    throwWeapon();
+  UWorld *World = GetWorld();
+  if (!World)
+    return;
+  TArray<FHitResult> HitResults;
+  FVector Center = GetActorLocation();
+
+  FCollisionQueryParams QueryParams;
+  QueryParams.AddIgnoredActor(this);
+
+  bool bHit = World->SweepMultiByChannel(
+      HitResults, Center, Center, FQuat::Identity,
+      ECC_WorldDynamic, // Или ваш канал для оружия
+      FCollisionShape::MakeSphere(SearchRadius), QueryParams);
+  UE_LOG(LogTemp, Warning, TEXT("I'M %d PICKING"), bHit);
+  UE_LOG(LogTemp, Warning, TEXT("FOUND %d ACTORS"), HitResults.Num());
+  if (!bHit || HitResults.Num() == 0) {
+    UE_LOG(LogTemp, Warning, TEXT("No weapons found nearby"));
+    return;
+  }
+
+  // Фильтруем только Weapon наследников
+  TArray<AWeapon *> NearbyWeapons;
+  for (FHitResult &Hit : HitResults) {
+    UE_LOG(LogTemp, Warning, TEXT("FOUND %s"), *Hit.GetActor()->GetName());
+    AWeapon *AvailableWeapon = Cast<AWeapon>(Hit.GetActor());
+    if ((AvailableWeapon) && (AvailableWeapon != Weapon)) {
+      NearbyWeapons.Add(AvailableWeapon);
+    }
+  }
+  UE_LOG(LogTemp, Warning, TEXT("FOUND %d WEAPONS"), NearbyWeapons.Num());
+  if (NearbyWeapons.Num() == 0)
+    return;
+
+  // Находим оружие с максимальным приоритетом
+  AWeapon *BestWeapon = nullptr;
+  int32 HighestPriority = -1;
+
+  for (AWeapon *AvailableWeapon : NearbyWeapons) {
+    int32 Priority = weaponPriority(AvailableWeapon);
+    if (Priority > HighestPriority) {
+      HighestPriority = Priority;
+      BestWeapon = AvailableWeapon;
+      UE_LOG(LogTemp, Warning, TEXT("Probably not here"));
+    }
+  }
+
+  if (BestWeapon) {
+    Weapon = BestWeapon;
+    WeaponClass = BestWeapon->GetClass();
+    WeaponState = BestWeapon->GetWeaponType();
+    FName SocketName(TEXT("hand_gun"));
+    Weapon->AttachToComponent(
+        this->GetMesh(),
+        FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
+    UE_LOG(LogTemp, Warning, TEXT("God i hope not here it's basic as fuck"), HitResults.Num());
+  }
+}
+
+void AHumanoid::throwWeapon(){
 
 }
 

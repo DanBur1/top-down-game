@@ -3,7 +3,7 @@
 
 #include "Melee.h"
 
-bool AMelee::attack(){ AWeapon::attack();
+bool AMelee::attack(){
   if (can_swing)
     return swing();
   else
@@ -28,8 +28,8 @@ bool AMelee::poke(){
 
   // LineTrace till first non pawn
   FHitResult Hit;
-  ECollisionChannel TraceChannel = ECC_Visibility;
-  bool bHit = World->LineTraceSingleByChannel(Hit, Start, End, TraceChannel,
+  ECollisionChannel TraceChannel = ECC_WorldStatic;
+  bool bHit = World->LineTraceSingleByObjectType(Hit, Start, End, TraceChannel,
                                               TraceParams);
 
   if (bHit) {
