@@ -51,9 +51,12 @@ protected:
   // Animation state for the current action of the weapon
   UPROPERTY(EditAnywhere, Category = "Weapon parameters")
   EHumanoidArmStates AnimState = EHumanoidArmStates::null;
-	// Time of the last attack
-  UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Parameters")
-  float last_attack = 0.f;
+  // Timer used for cooldown of the weapons
+  UPROPERTY()
+  FTimerHandle AttackCooldownTimer;
+  // Flag that is set true when the cooldown time starts and false if it passed
+  UPROPERTY()
+  bool is_cooling_down=false;
 	// Mesh
   UPROPERTY(VisibleAnywhere, Category = "Components")
   UStaticMeshComponent *WeaponMesh;
@@ -62,8 +65,9 @@ protected:
 
 	// Attack function. Returns false if it's impossible
   virtual bool attack();
-	// Checks whether the weapon is still in cooldown stage
-  bool isCoolingDown();
+	// Switches is_cooling_down to false
+  UFUNCTION()
+  void onCooldownFinished();
 
 public:	
 	// Unreal default events

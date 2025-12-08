@@ -7,7 +7,7 @@
 AWeapon::AWeapon()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
   // Visual
   WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
   RootComponent = WeaponMesh;
@@ -26,19 +26,22 @@ void AWeapon::BeginPlay()
 
 bool AWeapon::attack(){ return false; }
 
-bool AWeapon::isCoolingDown(){
-  float CurrentTime = GetWorld()->GetTimeSeconds();
-  return (CurrentTime - last_attack) < cooldown;
-}
-
 bool AWeapon::useWeapon(){
-  if (isCoolingDown())
+  if (is_cooling_down)
     return false;
-  last_attack = GetWorld()->GetTimeSeconds();
   if (attack()) {
+    is_cooling_down = true;
+    GetWorldTimerManager().SetTimer(AttackCooldownTimer, this,
+                                    &AWeapon::onCooldownFinished, cooldown,
+                                    false);
     AnimState = EHumanoidArmStates::attacking;
     return true;
   } else return false;
+}
+
+void AWeapon::onCooldownFinished() {
+  is_cooling_down = false;
+  AnimState = EHumanoidArmStates::null;
 }
 
 // Called every frame

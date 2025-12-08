@@ -45,15 +45,9 @@ public:
 
 	// Properties
 
-  // Enum that is used to store character's state depending on arm movement
-  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character states")
-  EHumanoidArmStates ArmState = EHumanoidArmStates::null;
   // Enum that is used to store character's state depending on movement
   UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character states")
   EHumanoidBodyStates BodyState = EHumanoidBodyStates::idle;
-  // Enum that is used to store character's state depending on his weapon
-  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character states")
-  EHumanoidWeaponStates WeaponState = EHumanoidWeaponStates::unarmed;
   // Component responsible for health and death
   UPROPERTY(EditAnywhere, Category = "Others")
   UDestructableComponent *HealthSystem;

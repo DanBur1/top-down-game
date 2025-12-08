@@ -53,17 +53,9 @@ void AHumanoid::BeginPlay() {
           this->GetMesh(),
           FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
     }
-    setWeaponState(WeaponClass);
   }
 }
 
-void AHumanoid::setWeaponState(TSubclassOf<AWeapon> NewWeapon) {
-  UE_LOG(LogTemp, Warning, TEXT("Setting the weapon state"));
-  if (Weapon) {
-    WeaponState = Weapon->GetWeaponType();
-    UE_LOG(LogTemp, Warning, TEXT("Actually setting the weapon class"));
-  }
-}
 
 void AHumanoid::replaceWeapon(float SearchRadius) {
   if (Weapon)
@@ -117,7 +109,6 @@ void AHumanoid::replaceWeapon(float SearchRadius) {
   if (BestWeapon) {
     Weapon = BestWeapon;
     WeaponClass = BestWeapon->GetClass();
-    WeaponState = BestWeapon->GetWeaponType();
     FName SocketName(TEXT("hand_gun"));
     Weapon->AttachToComponent(
         this->GetMesh(),
