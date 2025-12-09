@@ -11,6 +11,14 @@ AWeapon::AWeapon()
   // Visual
   WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
   RootComponent = WeaponMesh;
+  WeaponMesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+  WeaponMesh->SetCollisionObjectType(ECC_WorldDynamic);
+  WeaponMesh->SetCollisionResponseToAllChannels(
+      ECR_Ignore);
+  WeaponMesh->SetCollisionResponseToChannel(ECC_GameTraceChannel2,
+                                            ECR_Block);
+  WeaponMesh->SetSimulatePhysics(false);
+  // WeaponMesh->SetCollisionProfileName(TEXT("NoCollision"));
 }
 
 EHumanoidWeaponStates AWeapon::GetWeaponType() { return AnimType; }

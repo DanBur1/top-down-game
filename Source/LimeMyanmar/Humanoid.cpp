@@ -70,8 +70,7 @@ void AHumanoid::replaceWeapon(float SearchRadius) {
   QueryParams.AddIgnoredActor(this);
 
   bool bHit = World->SweepMultiByChannel(
-      HitResults, Center, Center, FQuat::Identity,
-      ECC_WorldDynamic, // Или ваш канал для оружия
+      HitResults, Center, Center, FQuat::Identity, ECC_GameTraceChannel2,
       FCollisionShape::MakeSphere(SearchRadius), QueryParams);
   UE_LOG(LogTemp, Warning, TEXT("I'M %d PICKING"), bHit);
   UE_LOG(LogTemp, Warning, TEXT("FOUND %d ACTORS"), HitResults.Num());
@@ -80,7 +79,6 @@ void AHumanoid::replaceWeapon(float SearchRadius) {
     return;
   }
 
-  // Фильтруем только Weapon наследников
   TArray<AWeapon *> NearbyWeapons;
   for (FHitResult &Hit : HitResults) {
     UE_LOG(LogTemp, Warning, TEXT("FOUND %s"), *Hit.GetActor()->GetName());
@@ -93,7 +91,6 @@ void AHumanoid::replaceWeapon(float SearchRadius) {
   if (NearbyWeapons.Num() == 0)
     return;
 
-  // Находим оружие с максимальным приоритетом
   AWeapon *BestWeapon = nullptr;
   int32 HighestPriority = -1;
 
