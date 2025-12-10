@@ -20,7 +20,13 @@ public:
 	AWeapon();
 
 	// Properties
-
+  
+  // Animation state associated with that weapon type
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon parameters")
+  EHumanoidWeaponStates AnimType = EHumanoidWeaponStates::unarmed;
+  // Animation state for the current action of the weapon
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon parameters")
+  EHumanoidArmStates AnimState = EHumanoidArmStates::null;
   // Time it takes to reset the weapon
   UPROPERTY(EditAnywhere, Category = "Weapon parameters")
   float cooldown = 0.f;
@@ -30,12 +36,6 @@ public:
 
 	// Methods
 
-	// Allows other classes to quickly get the animation state associated with this weapon type
-  UFUNCTION( BlueprintCallable, Category = "Weapon")
-  EHumanoidWeaponStates GetWeaponType();
-  // Allows other classes to get the state this weapon is in
-  UFUNCTION(BlueprintCallable, Category = "Weapon")
-  EHumanoidArmStates GetWeaponState();
 
 protected:
 	// Unreal default events
@@ -45,12 +45,6 @@ protected:
 
 	// Properties
 
-  // Animation state associated with that weapon type
-  UPROPERTY(EditAnywhere, Category = "Weapon parameters")
-  EHumanoidWeaponStates AnimType = EHumanoidWeaponStates::unarmed;
-  // Animation state for the current action of the weapon
-  UPROPERTY(EditAnywhere, Category = "Weapon parameters")
-  EHumanoidArmStates AnimState = EHumanoidArmStates::null;
   // Timer used for cooldown of the weapons
   UPROPERTY()
   FTimerHandle AttackCooldownTimer;

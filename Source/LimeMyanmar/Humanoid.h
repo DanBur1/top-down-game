@@ -32,9 +32,6 @@ protected:
 
   // Methods
 
-  // Changes the weapon state to fit the animation
-  void setWeaponState(TSubclassOf<AWeapon> NewWeapon);
-
 public:
 	// Default Unreal events
 

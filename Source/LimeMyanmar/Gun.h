@@ -24,7 +24,7 @@ public:
   // Properties
 
   // Number of ammunition stored in the weapon
-  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Other")
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Other")
   int magazine = 0;
 	// Number of bullets spawned during one fire call
   UPROPERTY(EditAnywhere, Category = "Ballistics")

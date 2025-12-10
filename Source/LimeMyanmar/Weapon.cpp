@@ -21,10 +21,6 @@ AWeapon::AWeapon()
   // WeaponMesh->SetCollisionProfileName(TEXT("NoCollision"));
 }
 
-EHumanoidWeaponStates AWeapon::GetWeaponType() { return AnimType; }
-
-EHumanoidArmStates AWeapon::GetWeaponState() { return AnimState; }
-
 // Called when the game starts or when spawned
 void AWeapon::BeginPlay()
 {
