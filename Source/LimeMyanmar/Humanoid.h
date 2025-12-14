@@ -8,7 +8,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Gun.h"
-#include "Melee.h"
+#include "Unarmed.h"
 #include "Humanoid.generated.h"
 
 
@@ -45,6 +45,9 @@ public:
   // Enum that is used to store character's state depending on movement
   UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character states")
   EHumanoidBodyStates BodyState = EHumanoidBodyStates::idle;
+  // Used to temporarely store character's BP_Unarmed so it's easier to switch to it whenever the character drops a weapon
+  UPROPERTY(EditAnywhere, Category = "Weapons")
+  AUnarmed *Fists;
   // Component responsible for health and death
   UPROPERTY(EditAnywhere, Category = "Others")
   UDestructableComponent *HealthSystem;

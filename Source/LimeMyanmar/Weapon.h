@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "ProjectEnums.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "Weapon.generated.h"
 
 UCLASS()
@@ -33,9 +34,17 @@ public:
   // Amount of damage dealt by a single attack of the weapon
   UPROPERTY(EditAnywhere, Category = "Weapon parameters")
   float damage = 0.f;
+  // Movement component for when the weapon is thrown
+  UPROPERTY(VisibleAnywhere, Category = "Components")
+  UProjectileMovementComponent *ProjMovement;
+  // Mesh
+  UPROPERTY(VisibleAnywhere, Category = "Components")
+  UStaticMeshComponent *WeaponMesh;
 
 	// Methods
 
+  // Sets up object of the class as a projectile
+  void launch();
 
 protected:
 	// Unreal default events
@@ -51,13 +60,13 @@ protected:
   // Flag that is set true when the cooldown time starts and false if it passed
   UPROPERTY()
   bool is_cooling_down=false;
-	// Mesh
-  UPROPERTY(VisibleAnywhere, Category = "Components")
-  UStaticMeshComponent *WeaponMesh;
-
+  // Flag that is used to check whether the weapon should call attack on timer or on button push
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon parameters")
+  bool is_automatic = false;
 	// Methods
 
 	// Attack function. Returns false if it's impossible
+  UFUNCTION()
   virtual bool attack();
 	// Switches is_cooling_down to false
   UFUNCTION()
@@ -71,6 +80,10 @@ public:
 
 	// Methods
   
+  // Called when attack starts
+  void startAttacking();
+  // Called when attack ends
+  void stopAttacking();
 	// Calls attack for weapon children
-  bool useWeapon();
+  void useWeapon();
 };

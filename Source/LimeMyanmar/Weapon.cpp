@@ -19,6 +19,11 @@ AWeapon::AWeapon()
                                             ECR_Block);
   WeaponMesh->SetSimulatePhysics(false);
   // WeaponMesh->SetCollisionProfileName(TEXT("NoCollision"));
+  ProjMovement =
+      CreateDefaultSubobject<UProjectileMovementComponent>(
+          TEXT("ProjectileMovement"));
+  ProjMovement->RegisterComponent();
+  ProjMovement->SetActive(false);
 }
 
 // Called when the game starts or when spawned
@@ -30,17 +35,44 @@ void AWeapon::BeginPlay()
 
 bool AWeapon::attack(){ return false; }
 
-bool AWeapon::useWeapon(){
+void AWeapon::startAttacking(){
+  if (is_automatic){
+    GetWorldTimerManager().SetTimer(AttackCooldownTimer, this,
+                                    &AWeapon::useWeapon, cooldown,
+                                    true);
+  } else
+    useWeapon();
+}
+
+void AWeapon::stopAttacking(){
+  if (GetWorldTimerManager().IsTimerActive(AttackCooldownTimer))
+    GetWorldTimerManager().ClearTimer(AttackCooldownTimer);
+  GetWorldTimerManager().SetTimer(
+      AttackCooldownTimer, this, &AWeapon::onCooldownFinished, cooldown, false);
+}
+
+void AWeapon::useWeapon(){
   if (is_cooling_down)
-    return false;
+    return;
   if (attack()) {
     is_cooling_down = true;
     GetWorldTimerManager().SetTimer(AttackCooldownTimer, this,
                                     &AWeapon::onCooldownFinished, cooldown,
                                     false);
     AnimState = EHumanoidArmStates::attacking;
-    return true;
-  } else return false;
+  }
+}
+
+void AWeapon::launch(){
+  ProjMovement->SetActive(true);
+  if (GetOwner())
+  ProjMovement->Velocity = GetOwner()->GetActorForwardVector() * 2000.f;
+  else
+    ProjMovement->Velocity = GetActorForwardVector() * 2000.f;
+  ProjMovement->bRotationFollowsVelocity = true;
+  ProjMovement->ProjectileGravityScale = 1.0f;
+  ProjMovement->InitialSpeed = 2000.f;
+  ProjMovement->MaxSpeed = 3000.f;
 }
 
 void AWeapon::onCooldownFinished() {

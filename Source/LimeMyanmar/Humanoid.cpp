@@ -18,6 +18,8 @@ AHumanoid::AHumanoid()
   // Health
   HealthSystem =
       CreateDefaultSubobject<UDestructableComponent>(TEXT("Health"));
+
+ 
 }
 
 int AHumanoid::weaponPriority(AWeapon *TestedWeapon){
@@ -34,17 +36,20 @@ int AHumanoid::weaponPriority(AWeapon *TestedWeapon){
 // Called when the game starts or when spawned
 void AHumanoid::BeginPlay() {
   UE_LOG(LogTemp, Warning, TEXT("Hello World %s"), *GetMesh()->GetName());
+
   // Weapon init
+  FActorSpawnParameters SpawnParams;
+  SpawnParams.Owner = this;
+  SpawnParams.SpawnCollisionHandlingOverride =
+      ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+  FVector SpawnLocation = FVector::ZeroVector;
+  FRotator SpawnRotation = FRotator::ZeroRotator;
+  Fists = GetWorld()->SpawnActor<AUnarmed>(
+      AUnarmed::StaticClass(), SpawnLocation, SpawnRotation, SpawnParams);
   if (WeaponClass) {
     UE_LOG(LogTemp, Warning, TEXT("Has weapon class"));
-    FActorSpawnParameters SpawnParams;
-    SpawnParams.Owner = this;
-    SpawnParams.SpawnCollisionHandlingOverride =
-        ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-    FVector SpawnLocation = FVector::ZeroVector;
-    FRotator SpawnRotation = FRotator::ZeroRotator;
-    Weapon = GetWorld()->SpawnActor<AWeapon>(
-        WeaponClass, SpawnLocation, SpawnRotation, SpawnParams);
+    Weapon = GetWorld()->SpawnActor<AWeapon>(WeaponClass, SpawnLocation,
+                                             SpawnRotation, SpawnParams);
 
     if (Weapon) {
       UE_LOG(LogTemp, Warning, TEXT("Spawned the gun"));
@@ -53,12 +58,13 @@ void AHumanoid::BeginPlay() {
           this->GetMesh(),
           FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
     }
-  }
+  } else
+    Weapon = Fists;
 }
 
 
 void AHumanoid::replaceWeapon(float SearchRadius) {
-  if (Weapon)
+  if ((Weapon)||(Weapon->IsA(AUnarmed::StaticClass())))
     throwWeapon();
   UWorld *World = GetWorld();
   if (!World)
@@ -115,12 +121,25 @@ void AHumanoid::replaceWeapon(float SearchRadius) {
 }
 
 void AHumanoid::throwWeapon(){
+  if (!Weapon)
+    return;
 
+  // You can't throw your fists away
+  if (Weapon->IsA(AUnarmed::StaticClass()))
+    return;
+
+  // Detaching the weapon preparing for a throw
+  Weapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+  Weapon->SetOwner(nullptr);
+  // Меняем физический профиль оружия на Projectile
+  Weapon->WeaponMesh->SetCollisionProfileName(TEXT("Projectile"));
+  Weapon->launch();
+  Weapon = Fists;
 }
 
 void AHumanoid::useCharacterWeapon(){
   if (Weapon)
-    Weapon->useWeapon();
+    Weapon->startAttacking();
 }
 
 // Called every frame
