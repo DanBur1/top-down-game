@@ -120,6 +120,12 @@ void AHumanoid::replaceWeapon(float SearchRadius) {
   }
 }
 
+void AHumanoid::stopUsingWeapon(){
+  if (Weapon){
+    Weapon->stopAttacking();
+  }
+}
+
 void AHumanoid::throwWeapon(){
   if (!Weapon)
     return;

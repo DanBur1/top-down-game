@@ -61,8 +61,10 @@ class LIMEMYANMAR_API AQFSM2_Player : public APlayerController
     // Changes controllers rotation according to mouse
     void updateAimRotation(float DeltaTime);
     // Reactions to actions
-    // Reaction to IA_Attack
-    void onAttack();
+    // Reaction to IA_Attack starting
+    void onAttackStart();
+    // Reaction to IA_Attack being completed
+    void onAttackEnd();
     // Reaction to IA_Move
     void onMove(const FInputActionValue &Value);
     // Reaction to IA_ReplaceWeapon

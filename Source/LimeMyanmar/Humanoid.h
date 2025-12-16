@@ -65,6 +65,8 @@ public:
 
   // Picks up closest weapon (or switches to unarmed if there's none) and throws the previous one
   void replaceWeapon(float SearchRadius = 200.f);
+  // Called when player/ai stops attack
+  void stopUsingWeapon();
   // Uses current character weapon as projectile
   void throwWeapon();
   // Calls attack function in the weapon

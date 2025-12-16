@@ -42,7 +42,11 @@ void AQFSM2_Player::SetupInputComponent(){
     // Attacking
     if (AttackAction) {
       EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started,
-                                         this, &AQFSM2_Player::onAttack);
+                                         this, &AQFSM2_Player::onAttackStart);
+    }
+    if (AttackAction) {
+      EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Completed,
+                                         this, &AQFSM2_Player::onAttackEnd);
     }
     // Movement
     if (MoveAction) {
@@ -113,9 +117,15 @@ void AQFSM2_Player::updateAimRotation(float DeltaTime) {
   }
 }
 
-void AQFSM2_Player::onAttack(){
+void AQFSM2_Player::onAttackStart(){
   if (PlayerCharacter){
     PlayerCharacter->useCharacterWeapon();
+  }
+}
+
+void AQFSM2_Player::onAttackEnd() {
+  if (PlayerCharacter) {
+    PlayerCharacter->stopUsingWeapon();
   }
 }
 
