@@ -9,6 +9,21 @@ UDestructableComponent::UDestructableComponent() {
 
 }
 
+void UDestructableComponent::BeginPlay(){
+  UActorComponent::BeginPlay();
+
+  if (GetOwner()) {
+    GetOwner()->OnTakeAnyDamage.AddDynamic(
+        this, &UDestructableComponent::onOwnerTookDamage);
+  }
+}
+
+void UDestructableComponent::onOwnerTookDamage(
+    AActor *DamagedActor, float Damage, const class UDamageType *DamageType,
+    class AController *InstigatedBy, AActor *DamageCauser) {
+  changeHealth(Damage);
+}
+
 void UDestructableComponent::TickComponent(
     float DeltaTime, ELevelTick TickType,
     FActorComponentTickFunction *ThisTickFunction) {

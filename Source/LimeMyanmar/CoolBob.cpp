@@ -10,8 +10,6 @@ ACoolBob::ACoolBob() : AHumanoid() {
 
 void ACoolBob::BeginPlay(){
   Super::BeginPlay();
-  MoveComp->Deactivate();
-  MoveComp->Activate(true);
 
 }
 

@@ -18,7 +18,7 @@ AWeapon::AWeapon()
   WeaponMesh->SetCollisionResponseToChannel(ECC_GameTraceChannel2,
                                             ECR_Block);
   WeaponMesh->SetSimulatePhysics(false);
-  // WeaponMesh->SetCollisionProfileName(TEXT("NoCollision"));
+  WeaponMesh->SetCollisionProfileName(TEXT("NoCollision"));
   ProjMovement =
       CreateDefaultSubobject<UProjectileMovementComponent>(
           TEXT("ProjectileMovement"));
