@@ -58,7 +58,7 @@ protected:
   // Damage function used when the projectile is explosive
   void applyRadialDamageAtLocation(const FVector &Location);
   // Reaction to solid collision
-  UFUNCTION()
+  UFUNCTION(BlueprintCallable, Category = "Weapon")
   void onHit(UPrimitiveComponent *HitComp, AActor *OtherActor,
              UPrimitiveComponent *OtherComp, FVector NormalImpulse,
              const FHitResult &Hit);

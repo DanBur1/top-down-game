@@ -131,19 +131,31 @@ void AHumanoid::stopUsingWeapon(){
 }
 
 void AHumanoid::throwWeapon(){
-  if (!Weapon)
+  // You can't throw your fists away or a nonexisting weapon
+  if (!Weapon || Weapon->IsA(AUnarmed::StaticClass()))
     return;
 
-  // You can't throw your fists away
-  if (Weapon->IsA(AUnarmed::StaticClass()))
-    return;
+  // Getting the spawn data for the projectile that will replace the weapon during throw
+  FVector SpawnLocation = Weapon->GetActorLocation();
+  FRotator SpawnRotation = Weapon->GetActorRotation();
+  FActorSpawnParameters SpawnParams;
+  SpawnParams.SpawnCollisionHandlingOverride =
+      ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-  // Detaching the weapon preparing for a throw
-  Weapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-  Weapon->SetOwner(nullptr);
-  // Меняем физический профиль оружия на Projectile
-  Weapon->WeaponMesh->SetCollisionProfileName(TEXT("Projectile"));
-  Weapon->launch();
+  // Spawn the projectile
+  AThrownWeapon *ThrownWeapon = GetWorld()->SpawnActor<AThrownWeapon>(
+      AThrownWeapon::StaticClass(), SpawnLocation, SpawnRotation, SpawnParams);
+
+  if (ThrownWeapon) {
+    ThrownWeapon->SetOwner(this);
+    ThrownWeapon->WeaponMesh = Weapon->WeaponMesh;
+    ThrownWeapon->launch();
+  }
+
+  // Удаляем предыдущее оружие
+  Weapon->Destroy();
+
+  // Меняем на кулаки
   Weapon = Fists;
 }
 

@@ -9,6 +9,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Gun.h"
 #include "Unarmed.h"
+#include "ThrownWeapon.h"
 #include "Humanoid.generated.h"
 
 

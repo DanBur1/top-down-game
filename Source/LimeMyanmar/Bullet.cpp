@@ -13,10 +13,6 @@ ABullet::ABullet() {
   BulletMesh->SetCollisionObjectType(ECC_WorldDynamic);
   BulletMesh->SetCollisionResponseToAllChannels(ECR_Block);
   BulletMesh->BodyInstance.SetCollisionProfileName(TEXT("Projectile"));
-  BulletMesh->SetNotifyRigidBodyCollision(true);
-  BulletMesh->SetEnableGravity(false);
-  BulletMesh->SetSimulatePhysics(false);
-  BulletMesh->OnComponentHit.AddDynamic(this, &ABullet::onHit);
   // Movement
   ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(
       TEXT("ProjectileMovement"));
@@ -47,6 +43,10 @@ void ABullet::BeginPlay() {
   }
   GetWorldTimerManager().SetTimer(MaxDistanceTimer, this,
                                   &ABullet::selfDestruct, travel_time, false);
+  BulletMesh->SetNotifyRigidBodyCollision(true);
+  BulletMesh->SetEnableGravity(false);
+  BulletMesh->SetSimulatePhysics(true);
+  BulletMesh->OnComponentHit.AddDynamic(this, &ABullet::onHit);
 }
 
 void ABullet::onHit(UPrimitiveComponent *HitComp, AActor *OtherActor,

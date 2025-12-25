@@ -19,11 +19,6 @@ AWeapon::AWeapon()
                                             ECR_Block);
   WeaponMesh->SetSimulatePhysics(false);
   WeaponMesh->SetCollisionProfileName(TEXT("NoCollision"));
-  ProjMovement =
-      CreateDefaultSubobject<UProjectileMovementComponent>(
-          TEXT("ProjectileMovement"));
-  ProjMovement->RegisterComponent();
-  ProjMovement->SetActive(false);
 }
 
 // Called when the game starts or when spawned
@@ -61,18 +56,6 @@ void AWeapon::useWeapon(){
                                     false);
     AnimState = EHumanoidArmStates::attacking;
   }
-}
-
-void AWeapon::launch(){
-  ProjMovement->SetActive(true);
-  if (GetOwner())
-  ProjMovement->Velocity = GetOwner()->GetActorForwardVector() * 2000.f;
-  else
-    ProjMovement->Velocity = GetActorForwardVector() * 2000.f;
-  ProjMovement->bRotationFollowsVelocity = true;
-  ProjMovement->ProjectileGravityScale = 1.0f;
-  ProjMovement->InitialSpeed = 2000.f;
-  ProjMovement->MaxSpeed = 3000.f;
 }
 
 void AWeapon::onCooldownFinished() {

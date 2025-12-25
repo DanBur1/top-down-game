@@ -34,17 +34,25 @@ public:
   // Amount of damage dealt by a single attack of the weapon
   UPROPERTY(EditAnywhere, Category = "Weapon parameters")
   float damage = 0.f;
-  // Movement component for when the weapon is thrown
-  UPROPERTY(VisibleAnywhere, Category = "Components")
-  UProjectileMovementComponent *ProjMovement;
   // Mesh
   UPROPERTY(VisibleAnywhere, Category = "Components")
   UStaticMeshComponent *WeaponMesh;
 
-	// Methods
+	public:
+  // Unreal default events
 
-  // Sets up object of the class as a projectile
-  void launch();
+  // Called every frame
+  virtual void Tick(float DeltaTime) override;
+
+  // Methods
+
+  // Called when attack starts
+  void startAttacking();
+  // Called when attack ends
+  void stopAttacking();
+  // Calls attack for weapon children
+  void useWeapon();
+
 
 protected:
 	// Unreal default events
@@ -72,18 +80,4 @@ protected:
   UFUNCTION()
   void onCooldownFinished();
 
-public:	
-	// Unreal default events
-	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Methods
-  
-  // Called when attack starts
-  void startAttacking();
-  // Called when attack ends
-  void stopAttacking();
-	// Calls attack for weapon children
-  void useWeapon();
 };
