@@ -5,8 +5,11 @@
 #include "Components/ActorComponent.h"
 #include "CoreMinimal.h"
 #include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystem.h"
 #include "Delegates/Delegate.h"
 #include "DestructableComponent.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeathSignature);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class LIMEMYANMAR_API UDestructableComponent : public UActorComponent {
@@ -20,6 +23,7 @@ public:
   // Begin play
   virtual void BeginPlay() override;
   // OnTakeDamage
+  UFUNCTION()
   void onOwnerTookDamage(AActor *DamagedActor, float Damage,
                          const class UDamageType *DamageType,
                          class AController *InstigatedBy, AActor *DamageCauser);
@@ -29,10 +33,21 @@ public:
                 FActorComponentTickFunction *ThisTickFunction) override;
 
 
-  // Variables
+  // Properties
 
-  // Flag for whether the character is dead or object is destroyed
-  bool dead = false;
+  // A particle effect that plays if an actor has no death event reaction and gets destroyed
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
+  class UParticleSystem *DeathParticleEffect;
+  // Flag that is set false for actors that can't process death/destruction so
+  // they get destroyed here instead of calling an event
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
+  bool has_complex_death = false;
+
+  // Events
+
+  // Character is dead
+  UPROPERTY(BlueprintAssignable, Category = "Health")
+  FOnDeathSignature OnDeath;
 
   // Functions
 
@@ -54,7 +69,7 @@ protected:
   // Properties
   // 
   // Character health or object durabiliy
-  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Variables")
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
   float health = 100;
 
 };

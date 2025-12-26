@@ -33,6 +33,9 @@ protected:
 
   // Methods
 
+  // Reaction to character's healthsystem dying
+  void death();
+
 public:
 	// Default Unreal events
 

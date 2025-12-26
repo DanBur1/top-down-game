@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Particles/ParticleSystem.h"
+	#include "EngineUtils.h"
 #include "Bullet.generated.h"
 
 UCLASS()

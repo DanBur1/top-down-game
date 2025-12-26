@@ -58,6 +58,7 @@ bool AGun::fire(){
             Gunman->GetMovementComponent()->Velocity.Length();
       SpawnedBullet->BarrelDirection = NewDirection.GetSafeNormal();
       SpawnedBullet->Owner = Gunman;
+      SpawnedBullet->SetInstigator(Gunman); 
       Gunman->GetMesh()->IgnoreActorWhenMoving(SpawnedBullet, true);
       // Spawn bullet
       UGameplayStatics::FinishSpawningActor(

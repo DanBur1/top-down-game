@@ -12,10 +12,14 @@ UDestructableComponent::UDestructableComponent() {
 void UDestructableComponent::BeginPlay(){
   UActorComponent::BeginPlay();
 
+  // Linking the events
   if (GetOwner()) {
+    UE_LOG(LogTemp, Warning, TEXT("Health system belongs to %s"),
+           *GetOwner()->GetName());
     GetOwner()->OnTakeAnyDamage.AddDynamic(
         this, &UDestructableComponent::onOwnerTookDamage);
   }
+
 }
 
 void UDestructableComponent::onOwnerTookDamage(
@@ -41,7 +45,12 @@ void UDestructableComponent::changeHealth(float damage) {
 
 
 void UDestructableComponent::kill() {
-  dead = true;
+  if (AActor *Owner = GetOwner()) {
+    if (has_complex_death)
+      OnDeath.Broadcast();
+    else
+      Owner->Destroy();
+  }
 }
 
 void UDestructableComponent::setMaxHealth(float value) { max_health = value; }

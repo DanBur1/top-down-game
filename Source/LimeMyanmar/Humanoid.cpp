@@ -64,8 +64,17 @@ void AHumanoid::BeginPlay() {
     }
   } else
     Weapon = Fists;
+
+  // Connecting the events
+
+  // Death
+  if (HealthSystem) {
+    HealthSystem->OnDeath.AddDynamic(this, &AHumanoid::death);
+  }
 }
 
+void AHumanoid::death(){ GetController()->UnPossess();
+}
 
 void AHumanoid::replaceWeapon(float SearchRadius) {
   if ((Weapon)||(Weapon->IsA(AUnarmed::StaticClass())))
