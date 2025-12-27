@@ -11,7 +11,7 @@ AGun::AGun(){
 void AGun::BeginPlay() {
   Super::BeginPlay();
   if (GetOwner())
-    Gunman = Cast<ACharacter>(GetOwner());
+    Wielder = Cast<ACharacter>(GetOwner());
 }
 
 bool AGun::attack(){
@@ -51,15 +51,26 @@ bool AGun::fire(){
     if (!SpawnedBullet) {
       fail_rate++;
       continue;
-    } else if (Gunman) {
+    } else if (Wielder) {
+      SpawnedBullet->BulletMesh->IgnoreActorWhenMoving(this, true);
+
+      // Getting shooters other bullets to make sure they don't collide.
+      // While it does take more time then just making bullet collision
+      // non-blocking with other bullets it allows to shoot down bullets
+      // fired by others which i believe is pretty sick
+      for (TActorIterator<ABullet> It(GetWorld()); It; ++It) {
+        if (It->GetOwner() == Wielder) {
+          SpawnedBullet->BulletMesh->IgnoreActorWhenMoving(*It, true);
+        }
+      }
       // Setting the bullet up
       SpawnedBullet->damage = damage;
       SpawnedBullet->speed_of_gun =
-            Gunman->GetMovementComponent()->Velocity.Length();
+            Wielder->GetMovementComponent()->Velocity.Length();
       SpawnedBullet->BarrelDirection = NewDirection.GetSafeNormal();
-      SpawnedBullet->Owner = Gunman;
-      SpawnedBullet->SetInstigator(Gunman); 
-      Gunman->GetMesh()->IgnoreActorWhenMoving(SpawnedBullet, true);
+      SpawnedBullet->Owner = Wielder;
+      SpawnedBullet->SetInstigator(Wielder); 
+      Wielder->GetMesh()->IgnoreActorWhenMoving(SpawnedBullet, true);
       // Spawn bullet
       UGameplayStatics::FinishSpawningActor(
           SpawnedBullet, FTransform(SpawnRotation, SpawnLocation, FVector(1.f, 1.f, 1.f)));

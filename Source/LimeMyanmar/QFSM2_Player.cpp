@@ -24,7 +24,6 @@ void AQFSM2_Player::OnPossess(APawn *InPawn) {
               ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
                   LocalPlayer)) {
         Subsystem->AddMappingContext(InputMappingContext, 0);
-        SetupInputComponent();
       }
     }
   }
@@ -55,7 +54,7 @@ void AQFSM2_Player::SetupInputComponent(){
     }
     // Picking/Throwing weapon
     if (ReplaceWeaponAction) {
-      EnhancedInputComponent->BindAction(ReplaceWeaponAction, ETriggerEvent::Triggered,
+      EnhancedInputComponent->BindAction(ReplaceWeaponAction, ETriggerEvent::Started,
                                          this, &AQFSM2_Player::onReplaceWeapon);
     }
   }

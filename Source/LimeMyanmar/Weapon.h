@@ -37,9 +37,9 @@ public:
   // Mesh
   UPROPERTY(VisibleAnywhere, Category = "Components")
   UStaticMeshComponent *WeaponMesh;
-
-	public:
-  // Unreal default events
+  // Character wielding the weapon
+  UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Other")
+  ACharacter *Wielder;
 
   // Called every frame
   virtual void Tick(float DeltaTime) override;

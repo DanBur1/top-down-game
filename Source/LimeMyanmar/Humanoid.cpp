@@ -77,7 +77,9 @@ void AHumanoid::death(){ GetController()->UnPossess();
 }
 
 void AHumanoid::replaceWeapon(float SearchRadius) {
-  if ((Weapon)||(Weapon->IsA(AUnarmed::StaticClass())))
+  UE_LOG(LogTemp, Error, TEXT("REPLACE CALLED - Current Weapon: %s"),
+         Weapon ? *Weapon->GetName() : TEXT("NULL"));
+  if ((Weapon)&&(!Weapon->IsA(AUnarmed::StaticClass())))
     throwWeapon();
   UWorld *World = GetWorld();
   if (!World)
@@ -87,6 +89,7 @@ void AHumanoid::replaceWeapon(float SearchRadius) {
 
   FCollisionQueryParams QueryParams;
   QueryParams.AddIgnoredActor(this);
+  QueryParams.AddIgnoredActor(Weapon);
 
   bool bHit = World->SweepMultiByChannel(
       HitResults, Center, Center, FQuat::Identity, ECC_GameTraceChannel2,
@@ -102,7 +105,7 @@ void AHumanoid::replaceWeapon(float SearchRadius) {
   for (FHitResult &Hit : HitResults) {
     UE_LOG(LogTemp, Warning, TEXT("FOUND %s"), *Hit.GetActor()->GetName());
     AWeapon *AvailableWeapon = Cast<AWeapon>(Hit.GetActor());
-    if ((AvailableWeapon) && (AvailableWeapon != Weapon)) {
+    if ((AvailableWeapon)) {
       NearbyWeapons.Add(AvailableWeapon);
     }
   }
@@ -129,7 +132,8 @@ void AHumanoid::replaceWeapon(float SearchRadius) {
     Weapon->AttachToComponent(
         this->GetMesh(),
         FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
-    UE_LOG(LogTemp, Warning, TEXT("God i hope not here it's basic as fuck"), HitResults.Num());
+    Weapon->Wielder = this;
+    UE_LOG(LogTemp, Warning, TEXT("God i hope not here it's basic as fuck %s %s"), *Weapon->GetName(), *BestWeapon->GetName());
   }
 }
 
@@ -177,4 +181,6 @@ void AHumanoid::useCharacterWeapon(){
 void AHumanoid::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+  UE_LOG(LogTemp, Warning, TEXT("Character has weapon %s"),
+         *Weapon->GetName());
 }

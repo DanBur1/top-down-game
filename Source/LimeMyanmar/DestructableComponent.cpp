@@ -48,8 +48,15 @@ void UDestructableComponent::kill() {
   if (AActor *Owner = GetOwner()) {
     if (has_complex_death)
       OnDeath.Broadcast();
-    else
+    else {
+      UGameplayStatics::SpawnEmitterAtLocation(
+          GetWorld(),
+          DeathParticleEffect,
+          Owner->GetActorLocation(),
+          Owner->GetActorRotation()
+      );
       Owner->Destroy();
+    }
   }
 }
 

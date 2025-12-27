@@ -26,6 +26,9 @@ public:
 
   // Properties
 
+    // Model
+  UPROPERTY(VisibleAnywhere, Category = "Components")
+  UStaticMeshComponent *BulletMesh;
   // Damage dealt by bullet
   UPROPERTY(EditDefaultsOnly, Category = "Bullet properties")
   float damage = 20.f;
@@ -41,9 +44,6 @@ protected:
 
   // Properties
 
-  // Model
-  UPROPERTY(VisibleAnywhere, Category = "Components")
-  UStaticMeshComponent *BulletMesh;
   // Radius of splash damage
   UPROPERTY(EditDefaultsOnly, Category = "Bullet properties")
   float damage_radius = 50.f;

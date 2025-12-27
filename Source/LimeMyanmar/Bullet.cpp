@@ -31,22 +31,6 @@ void ABullet::BeginPlay() {
     UE_LOG(LogTemp, Warning, TEXT("%s launched a bullet"),
            *GetOwner()->GetName());
     
-    // Getting shooters other bullets to make sure they don't collide.
-    // While it does take more time then just making bullet collision
-    // non-blocking with other bullets it allows to shoot down bullets
-    // fired by others which i believe is pretty sick
-    for (TActorIterator<ABullet> It(GetWorld()); It; ++It) {
-      ABullet *OtherBullet = *It;
-      if (OtherBullet != this && OtherBullet->GetOwner() == GetOwner()) {
-        BulletMesh->IgnoreActorWhenMoving(OtherBullet, true);
-        UE_LOG(LogTemp, Log, TEXT("Bullet ignores sibling bullet: %s"),
-               *OtherBullet->GetName());
-      }
-    }
-
-    // Ignoring the owner to make sure you can't accidentally kill self
-    BulletMesh->IgnoreActorWhenMoving(GetOwner(), true);
-    
     // Setting up the projectile movement
   if ((ProjectileMovement) && (!BarrelDirection.IsZero())) {
       ProjectileMovement->Velocity =
