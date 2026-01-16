@@ -3,6 +3,10 @@
 
 #include "CoolBob.h"
 
+struct FReward : public FTableRowBase {
+  int Reward = 0;
+};
+
 ACoolBob::ACoolBob() : AHumanoid() {
   PrimaryActorTick.bCanEverTick = true;
   HealthSystem->setHealth(100.f);
@@ -21,6 +25,12 @@ void ACoolBob::PossessedBy(AController *NewController){
 
 // Called every frame
 void ACoolBob::Tick(float DeltaTime) { Super::Tick(DeltaTime); }
+
+void ACoolBob::changeScore(FName RowName){
+  FReward *RowData =
+      ScoreTable->FindRow<FReward>(RowName, TEXT("GetRewardValue"));
+  score = score + RowData->Reward;
+}
 
 void ACoolBob::move(float x, float y){
   if ((BodyState == EHumanoidBodyStates::dying) ||

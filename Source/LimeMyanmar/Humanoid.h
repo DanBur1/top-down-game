@@ -46,11 +46,14 @@ public:
 
 	// Properties
 
+  // Enum that is used to check whether the AI should be hostile or not
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Others")
+  ETeams AlliedTeam = ETeams::aliens;
   // Enum that is used to store character's state depending on movement
   UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character states")
   EHumanoidBodyStates BodyState = EHumanoidBodyStates::idle;
   // Used to temporarely store character's BP_Unarmed so it's easier to switch to it whenever the character drops a weapon
-  UPROPERTY(EditAnywhere, Category = "Weapons")
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapons")
   AUnarmed *Fists;
   // Component responsible for health and death
   UPROPERTY(EditAnywhere, Category = "Others")
@@ -74,5 +77,6 @@ public:
   // Uses current character weapon as projectile
   void throwWeapon();
   // Calls attack function in the weapon
+  UFUNCTION(BlueprintCallable, Category = "Weapons")
   void useCharacterWeapon();
 };

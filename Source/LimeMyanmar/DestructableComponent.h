@@ -42,6 +42,9 @@ public:
   // they get destroyed here instead of calling an event
   UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
   bool has_complex_death = false;
+  // Flag for components of dead actors
+  UPROPERTY(BlueprintReadOnly, Category = "Health")
+  bool is_dead = false;
 
   // Events
 

@@ -46,6 +46,7 @@ void UDestructableComponent::changeHealth(float damage) {
 
 void UDestructableComponent::kill() {
   if (AActor *Owner = GetOwner()) {
+    is_dead = true;
     if (has_complex_death)
       OnDeath.Broadcast();
     else {

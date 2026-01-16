@@ -37,3 +37,11 @@ enum class EHumanoidWeaponStates : uint8 {
   rifle UMETA(DisplayName = "Rifle"),
   throwable UMETA(DisplayName = "Throwable")
 };
+
+UENUM(BlueprintType)
+// Enumeration of all teams in the game. Used to distinguish between friendlies
+// and hostiles. Made via a enum in case i'll want to add more than 2
+enum class ETeams : uint8{
+  humans UMETA(DisplayName = "Human Team"), // Player friendly
+  aliens UMETA(DisplayName = "Alien Team") // Player hostile
+};
