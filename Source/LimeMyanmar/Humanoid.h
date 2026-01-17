@@ -34,6 +34,7 @@ protected:
   // Methods
 
   // Reaction to character's healthsystem dying
+  UFUNCTION()
   void death();
 
 public:

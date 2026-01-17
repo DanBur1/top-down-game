@@ -22,60 +22,73 @@ bool AGun::attack(){
   return false;
 }
 
-bool AGun::fire(){
+bool AGun::fire() {
   if (!Muzzle || !BulletClass) {
     return false;
   }
-  
+
   // Get barrel location and direction
-  FVector SpawnLocation = Muzzle->GetComponentLocation();
+  FVector BaseLocation = Muzzle->GetComponentLocation();
   FVector Forward = Muzzle->GetForwardVector();
-  
-  // Int used to count failed spawns. fire only fails when all bullets failed to spawn
   int fail_rate = 0;
 
-  // Running a spawn function for each bullet a gun can fire per shot
-  for (int i = 0; i < projectiles_per_shot; i++) {
+  // Создаем массив для временного хранения пуль
+  TArray<ABullet *> BulletsToSpawn;
 
-    // Calculating bullet trajectory considering the offset
+  for (int i = 0; i < projectiles_per_shot; i++) {
     float HalfRad = FMath::DegreesToRadians(spread_angle * 0.5f);
     float RandomAngle = FMath::RandRange(-HalfRad, HalfRad);
     FVector NewDirection = Forward.RotateAngleAxis(
         FMath::RadiansToDegrees(RandomAngle), FVector::UpVector);
+
+    // Немного смещаем точку спавна для каждой пули
+    FVector SpawnOffset = FVector(0, 0, 0);
+    if (projectiles_per_shot > 1) {
+      float OffsetAmount = 5.0f; // Небольшое смещение
+      SpawnOffset = FVector(FMath::RandRange(-OffsetAmount, OffsetAmount),
+                            FMath::RandRange(-OffsetAmount, OffsetAmount), 0);
+    }
+
+    FVector SpawnLocation = BaseLocation + SpawnOffset;
     FRotator SpawnRotation = NewDirection.Rotation();
-    UE_LOG(LogTemp, Warning, TEXT("Spawn location %s"), *SpawnLocation.ToString());
-    // Deffered spawn to modify the bullet before it's activated
     ABullet *SpawnedBullet = GetWorld()->SpawnActorDeferred<ABullet>(
-        BulletClass, FTransform(SpawnRotation, SpawnLocation, FVector(1.f, 1.f, 1.f)), nullptr, nullptr,
+        BulletClass, FTransform(SpawnRotation, SpawnLocation), nullptr, nullptr,
         ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+
     if (!SpawnedBullet) {
       fail_rate++;
       continue;
-    } else if (Wielder) {
-      SpawnedBullet->BulletMesh->IgnoreActorWhenMoving(this, true);
+    }
 
-      // Getting shooters other bullets to make sure they don't collide.
-      // While it does take more time then just making bullet collision
-      // non-blocking with other bullets it allows to shoot down bullets
-      // fired by others which i believe is pretty sick
+    BulletsToSpawn.Add(SpawnedBullet);
+  }
+
+  // Finishing the spawn
+  for (ABullet *Bullet : BulletsToSpawn) {
+    UE_LOG(LogTemp, Warning, TEXT("HERE 0"));
+    if (Wielder) {
+      UE_LOG(LogTemp, Warning, TEXT("HERE %s"), *Wielder->GetName());
+      // Adding ignored actors
+      Bullet->BulletMesh->IgnoreActorWhenMoving(this, true);
       for (TActorIterator<ABullet> It(GetWorld()); It; ++It) {
-        if (It->GetOwner() == Wielder) {
-          SpawnedBullet->BulletMesh->IgnoreActorWhenMoving(*It, true);
+        if (It->GetOwner() == Wielder && *It != Bullet) {
+          UE_LOG(LogTemp, Warning, TEXT("HERE 1"));
+          Bullet->BulletMesh->IgnoreActorWhenMoving(*It, true);
         }
       }
-      // Setting the bullet up
-      SpawnedBullet->damage = damage;
-      SpawnedBullet->speed_of_gun =
-            Wielder->GetMovementComponent()->Velocity.Length();
-      SpawnedBullet->BarrelDirection = NewDirection.GetSafeNormal();
-      SpawnedBullet->Owner = Wielder;
-      SpawnedBullet->SetInstigator(Wielder); 
-      Wielder->GetMesh()->IgnoreActorWhenMoving(SpawnedBullet, true);
-      // Spawn bullet
-      UGameplayStatics::FinishSpawningActor(
-          SpawnedBullet, FTransform(SpawnRotation, SpawnLocation, FVector(1.f, 1.f, 1.f)));
+
+
+      // Bullet setup
+      Bullet->damage = damage;
+      Bullet->speed_of_gun = Wielder->GetVelocity().Size();
+      Bullet->BarrelDirection = Bullet->GetActorForwardVector();
+      Bullet->Owner = Wielder;
+      Bullet->SetInstigator(Wielder);
+
+      // Spawning
+      UGameplayStatics::FinishSpawningActor(Bullet, Bullet->GetTransform());
     }
   }
-  UE_LOG(LogTemp, Warning, TEXT("%d bullets not spawned"), fail_rate);
-  return fail_rate<projectiles_per_shot;
+
+  return fail_rate < projectiles_per_shot;
 }

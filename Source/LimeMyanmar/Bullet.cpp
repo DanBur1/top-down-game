@@ -9,9 +9,8 @@ ABullet::ABullet() {
   BulletMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BulletMesh"));
   RootComponent = BulletMesh;
   // Collision
-  BulletMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-  BulletMesh->SetCollisionObjectType(ECC_WorldDynamic);
-  BulletMesh->SetCollisionResponseToAllChannels(ECR_Block);
+  // BulletMesh->SetCollisionObjectType(ECC_WorldDynamic);
+ // BulletMesh->SetCollisionResponseToAllChannels(ECR_Block);
   BulletMesh->BodyInstance.SetCollisionProfileName(TEXT("Projectile"));
   // Movement
   ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(
@@ -30,7 +29,7 @@ void ABullet::BeginPlay() {
   if (GetOwner()) {
     UE_LOG(LogTemp, Warning, TEXT("%s launched a bullet"),
            *GetOwner()->GetName());
-    
+ //   BulletMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
     // Setting up the projectile movement
   if ((ProjectileMovement) && (!BarrelDirection.IsZero())) {
       ProjectileMovement->Velocity =
@@ -58,6 +57,10 @@ void ABullet::BeginPlay() {
 void ABullet::onHit(UPrimitiveComponent *HitComp, AActor *OtherActor,
                     UPrimitiveComponent *OtherComp, FVector NormalImpulse,
                     const FHitResult &Hit) {
+  ABullet *OtherBullet = Cast<ABullet>(OtherActor);
+  if (OtherBullet && OtherBullet->Owner == this->Owner) {
+    return;
+  }
   if (is_explosive)
     applyRadialDamageAtLocation(Hit.ImpactPoint);
   else
