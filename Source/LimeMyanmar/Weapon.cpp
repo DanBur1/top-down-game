@@ -33,10 +33,10 @@ bool AWeapon::attack(){ return false; }
 void AWeapon::startAttacking(){
   if (is_automatic){
     GetWorldTimerManager().SetTimer(AttackCooldownTimer, this,
-                                    &AWeapon::useWeapon, cooldown,
+                                    &AWeapon::useWeaponAuto, cooldown,
                                     true);
   } else
-    useWeapon();
+    useWeaponSemi();
 }
 
 void AWeapon::stopAttacking(){
@@ -46,7 +46,13 @@ void AWeapon::stopAttacking(){
       AttackCooldownTimer, this, &AWeapon::onCooldownFinished, cooldown, false);
 }
 
-void AWeapon::useWeapon(){
+void AWeapon::useWeaponAuto() {
+  if (attack()){
+    AnimState = EHumanoidArmStates::attacking;
+  }
+}
+
+void AWeapon::useWeaponSemi(){
   if (is_cooling_down)
     return;
   if (attack()) {

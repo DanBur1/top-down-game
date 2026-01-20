@@ -50,8 +50,10 @@ public:
   void startAttacking();
   // Called when attack ends
   void stopAttacking();
-  // Calls attack for weapon children
-  void useWeapon();
+  // Calls attack for weapon children without cooldown
+  void useWeaponAuto();
+  // Calls attack for weapon children with cooldown
+  void useWeaponSemi();
 
 
 protected:
