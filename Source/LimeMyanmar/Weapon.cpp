@@ -62,6 +62,7 @@ void AWeapon::useWeaponSemi(){
                                     false);
     AnimState = EHumanoidArmStates::attacking;
   }
+  return;
 }
 
 void AWeapon::onCooldownFinished() {

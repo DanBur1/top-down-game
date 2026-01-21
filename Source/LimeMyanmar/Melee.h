@@ -27,7 +27,7 @@ protected:
 	// Override of weapon attack function
   bool attack() override;
 	// Scans for actors in front of the attacking character and deals damage to them
-  bool poke();
+  bool stab();
 	// Scans for actors within certain sector around attacking character and deals damage to them
 	bool swing();
 

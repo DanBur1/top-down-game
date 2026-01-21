@@ -8,5 +8,5 @@ AUnarmed::AUnarmed() {
   AnimType = EHumanoidWeaponStates::unarmed;
   AnimState = EHumanoidArmStates::null;
   cooldown = 0.2f;
-  damage = 0.f;
+  damage = 100.f;
 }

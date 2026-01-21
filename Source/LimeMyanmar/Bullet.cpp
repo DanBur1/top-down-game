@@ -11,7 +11,7 @@ ABullet::ABullet() {
   // Collision
   // BulletMesh->SetCollisionObjectType(ECC_WorldDynamic);
  // BulletMesh->SetCollisionResponseToAllChannels(ECR_Block);
-  BulletMesh->BodyInstance.SetCollisionProfileName(TEXT("Projectile"));
+  //BulletMesh->BodyInstance.SetCollisionProfileName(TEXT("Projectile"));
   // Movement
   ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(
       TEXT("ProjectileMovement"));
@@ -49,14 +49,16 @@ void ABullet::BeginPlay() {
 
   // Physics
   BulletMesh->SetNotifyRigidBodyCollision(true);
+  //BulletMesh->SetGenerateOverlapEvents(true);
   BulletMesh->SetEnableGravity(false);
   BulletMesh->SetSimulatePhysics(false);
   BulletMesh->OnComponentHit.AddDynamic(this, &ABullet::onHit);
 }
 
 void ABullet::onHit(UPrimitiveComponent *HitComp, AActor *OtherActor,
-                    UPrimitiveComponent *OtherComp, FVector NormalImpulse,
-                    const FHitResult &Hit) {
+           UPrimitiveComponent *OtherComp, FVector NormalImpulse,
+           const FHitResult &Hit)
+{
   ABullet *OtherBullet = Cast<ABullet>(OtherActor);
   if (OtherBullet && OtherBullet->Owner == this->Owner) {
     return;
