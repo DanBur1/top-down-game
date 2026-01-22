@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Kismet/GameplayStatics.h"
 #include "ProjectEnums.h"
-#include "GameFramework/Actor.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Weapon.generated.h"
 

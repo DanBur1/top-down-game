@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Weapon.h"
+	#include "Engine/OverlapResult.h"
 #include "Melee.generated.h"
 
 /**
@@ -17,6 +18,7 @@ protected:
 	// Properties
 
 	// If true the weapon swings if false the weapon pokes
+  UPROPERTY(EditAnywhere, Category = "Weapon parameters")
   bool can_swing = false;
   // Either the length of the melee weapon or the distance a gun can shoot at
   UPROPERTY(EditAnywhere, Category = "Weapon parameters")

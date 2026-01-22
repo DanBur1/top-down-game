@@ -80,20 +80,25 @@ void AHumanoid::death(){ GetController()->UnPossess();
 void AHumanoid::replaceWeapon(float SearchRadius) {
   UE_LOG(LogTemp, Error, TEXT("REPLACE CALLED - Current Weapon: %s"),
          Weapon ? *Weapon->GetName() : TEXT("NULL"));
+
+  // If character already has a weapon and it's not his own hands throw it out
   if ((Weapon)&&(!Weapon->IsA(AUnarmed::StaticClass())))
     throwWeapon();
+  // Checking if pointer to world is valid so it doesn't crash later during collision check
   UWorld *World = GetWorld();
   if (!World)
     return;
+
+  // Preparing for collision check
   TArray<FHitResult> HitResults;
   FVector Center = GetActorLocation();
-
   FCollisionQueryParams QueryParams;
   QueryParams.AddIgnoredActor(this);
   QueryParams.AddIgnoredActor(Weapon);
-
+  
+  // Collision check to find any weapons in overlapped area
   bool bHit = World->SweepMultiByChannel(
-      HitResults, Center, Center, FQuat::Identity, ECC_GameTraceChannel2,
+      HitResults, Center, Center, FQuat::Identity, ECC_GameTraceChannel2, // Custom channel for weapons
       FCollisionShape::MakeSphere(SearchRadius), QueryParams);
   UE_LOG(LogTemp, Warning, TEXT("I'M %d PICKING"), bHit);
   UE_LOG(LogTemp, Warning, TEXT("FOUND %d ACTORS"), HitResults.Num());
@@ -101,7 +106,8 @@ void AHumanoid::replaceWeapon(float SearchRadius) {
     UE_LOG(LogTemp, Warning, TEXT("No weapons found nearby"));
     return;
   }
-
+  
+  // Get weapons out of all overlapped actors responding to the collision check
   TArray<AWeapon *> NearbyWeapons;
   for (FHitResult &Hit : HitResults) {
     UE_LOG(LogTemp, Warning, TEXT("FOUND %s"), *Hit.GetActor()->GetName());
@@ -114,6 +120,7 @@ void AHumanoid::replaceWeapon(float SearchRadius) {
   if (NearbyWeapons.Num() == 0)
     return;
 
+  // Pick weapon based on its priority
   AWeapon *BestWeapon = nullptr;
   int32 HighestPriority = -1;
 
@@ -126,6 +133,7 @@ void AHumanoid::replaceWeapon(float SearchRadius) {
     }
   }
 
+  // Attaching the weapon
   if (BestWeapon) {
     Weapon = BestWeapon;
     WeaponClass = BestWeapon->GetClass();
@@ -134,7 +142,6 @@ void AHumanoid::replaceWeapon(float SearchRadius) {
         this->GetMesh(),
         FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
     Weapon->Wielder = this;
-    UE_LOG(LogTemp, Warning, TEXT("God i hope not here it's basic as fuck %s %s"), *Weapon->GetName(), *BestWeapon->GetName());
   }
 }
 
@@ -182,6 +189,4 @@ void AHumanoid::useCharacterWeapon(){
 void AHumanoid::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-  UE_LOG(LogTemp, Warning, TEXT("Character has weapon %s"),
-         *Weapon->GetName());
 }

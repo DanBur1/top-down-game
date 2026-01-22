@@ -31,6 +31,7 @@ void AWeapon::BeginPlay()
 bool AWeapon::attack(){ return false; }
 
 void AWeapon::startAttacking(){
+  UE_LOG(LogTemp, Warning, TEXT("Start attackingc called"));
   if (is_automatic){
     GetWorldTimerManager().SetTimer(AttackCooldownTimer, this,
                                     &AWeapon::useWeaponAuto, cooldown,
@@ -53,6 +54,8 @@ void AWeapon::useWeaponAuto() {
 }
 
 void AWeapon::useWeaponSemi(){
+  UE_LOG(LogTemp, Warning,
+         TEXT("Use weapon called"));
   if (is_cooling_down)
     return;
   if (attack()) {
