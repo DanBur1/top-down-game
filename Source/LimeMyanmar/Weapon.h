@@ -34,6 +34,9 @@ public:
   // Amount of damage dealt by a single attack of the weapon
   UPROPERTY(EditAnywhere, Category = "Weapon parameters")
   float damage = 0.f;
+  // Name that's used in the game
+  UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon parameters")
+  FString PublicName;
   // Mesh
   UPROPERTY(VisibleAnywhere, Category = "Components")
   UStaticMeshComponent *WeaponMesh;

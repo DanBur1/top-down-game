@@ -115,7 +115,7 @@ bool AMelee::swing() {
       continue;
 
     UGameplayStatics::ApplyDamage(
-        HitActor, damage, Owner->GetInstigatorController(), Owner, nullptr);
+        HitActor, damage, Wielder->GetInstigatorController(), Wielder, nullptr);
 
     AlreadyHitActors.Add(HitActor);
   }

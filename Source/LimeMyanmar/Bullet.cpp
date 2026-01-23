@@ -65,8 +65,9 @@ void ABullet::onHit(UPrimitiveComponent *HitComp, AActor *OtherActor,
   }
   if (is_explosive)
     applyRadialDamageAtLocation(Hit.ImpactPoint);
-  else
-    applyDamageToHitActor(OtherActor);
+  else {
+      applyDamageToHitActor(OtherActor);
+  }
   selfDestruct();
 }
 
@@ -83,10 +84,16 @@ void ABullet::applyRadialDamageAtLocation(const FVector &Location) {
 }
 
 void ABullet::applyDamageToHitActor(AActor *Actor) {
+  if (Actor == nullptr)
+    return;
+  AController *InstigatorController = GetInstigatorController();
+  if (InstigatorController == nullptr)
+    return;
   UE_LOG(LogTemp, Warning, TEXT("%s is hit"), *Actor->GetName());
   TArray<AActor *> IgnoreActors;
   IgnoreActors.Add(GetOwner());
-  UGameplayStatics::ApplyDamage(Actor, damage, GetInstigatorController(),
+  if (GetOwner())
+    UGameplayStatics::ApplyDamage(Actor, damage, InstigatorController,
                                 GetOwner(), nullptr);
 }
 

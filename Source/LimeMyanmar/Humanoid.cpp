@@ -74,7 +74,8 @@ void AHumanoid::BeginPlay() {
   }
 }
 
-void AHumanoid::death(){ GetController()->UnPossess();
+void AHumanoid::death(){ //GetController()->UnPossess();
+  GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void AHumanoid::replaceWeapon(float SearchRadius) {

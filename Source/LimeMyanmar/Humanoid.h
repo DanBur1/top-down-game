@@ -57,7 +57,7 @@ public:
   UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapons")
   AUnarmed *Fists;
   // Component responsible for health and death
-  UPROPERTY(EditAnywhere, Category = "Others")
+  UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Others")
   UDestructableComponent *HealthSystem;
 	// Movement component
   UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
